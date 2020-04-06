@@ -9,9 +9,6 @@ const client = new Mongodb.MongoClient(uri, {
   useNewUrlParser: true
 })
 
-// Use connect method to connect to the Server
-
-
 server.listen(port, () => {
   console.info(`Server listening on http://localhost:${port}`)
 })
