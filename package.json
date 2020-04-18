@@ -4,6 +4,7 @@
   "description": "",
   "main": "js/server.js",
   "scripts": {
+    "dev": "nodemon js/server.js",
     "start": "node js/server.js"
   },
   "author": "",
@@ -23,6 +24,7 @@
     "@types/mongodb": "^3.5.8",
     "@types/mongoose": "^5.7.12",
     "@types/node": "^13.13.0",
+    "nodemon": "^2.0.3",
     "typescript": "^3.8.3"
   }
 }

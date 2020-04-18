@@ -6,9 +6,9 @@ router.use((req, res, next) => {
   next()
 })
 
-router.get('/', (req, res, next) => {
-  res.end('HELLO')
-})
+router
+  .route('/')
+  .get((req, res) => { res.end('Ready') })
 
 
 export default router
