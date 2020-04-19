@@ -9,16 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Express = require("express");
-const db_1 = require("./utils/db");
+const express = require("express");
 const routes_1 = require("./api/v1/routes");
+const routes_2 = require("./api/index/routes");
+const db_1 = require("./api/v1/models/db");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const app = Express();
+        const app = express();
         const port = process.env.PORT || 5000;
         const conn = yield db_1.default.connect();
         if (conn) {
             app.use('/api/v1/', routes_1.default);
+            app.use('/', routes_2.default);
             app.listen(port, () => {
                 console.log(`Server listening on: http://localhost:${port}`);
             });

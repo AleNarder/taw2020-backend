@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose'
 import auctionSchema from './auction'
 import bookSchema from './book'
 
-export default new mongoose.Schema({
+const userSchema = new mongoose.Schema({
 
   firstname: {
     type: String,
@@ -47,3 +47,5 @@ export default new mongoose.Schema({
   auctions: [auctionSchema]
 })
 
+mongoose.model('User', userSchema, 'Users')
+export default userSchema

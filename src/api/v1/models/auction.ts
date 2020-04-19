@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose'
 import bookSchema from './book'
 import userSchema from './user'
 
-export default new mongoose.Schema({
+const auctionSchema = new mongoose.Schema({
   created: {
     type: Date,
     required: true
@@ -24,4 +24,7 @@ export default new mongoose.Schema({
   buyer: [userSchema],
   seller: [userSchema],
   book: [bookSchema]
-})  
+})
+
+mongoose.model('Auction', auctionSchema, 'Autction')
+export default auctionSchema

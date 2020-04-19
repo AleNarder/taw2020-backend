@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {
     POST: {
-        login: (req, res, next) => {
+        logout: (req, res, next) => {
         }
     }
 };

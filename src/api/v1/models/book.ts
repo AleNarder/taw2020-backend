@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose'
 import userSchema from './user'
 
-export default new mongoose.Schema({
+const bookSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
@@ -20,3 +20,6 @@ export default new mongoose.Schema({
   },
   owner: [userSchema]
 })
+
+mongoose.model('Book', bookSchema, 'Books')
+export default bookSchema
