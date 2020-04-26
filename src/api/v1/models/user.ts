@@ -1,5 +1,4 @@
 import * as mongoose from 'mongoose'
-import auctionSchema from './auction'
 import bookSchema from './book'
 
 const userSchema = new mongoose.Schema({
@@ -29,8 +28,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   }, 
-
+  province: {
+    type: String,
+    required: true
+  },
+  cap: {
+    type: String,
+    required: true
+  },
   address: {
+    type: String,
+    required: true
+  },
+  location: {
     type: {
       type: String,
       enum: ['Point'],
@@ -44,8 +54,8 @@ const userSchema = new mongoose.Schema({
   },
 
   books: [bookSchema],
-  auctions: [auctionSchema]
 })
 
-mongoose.model('User', userSchema, 'Users')
-export default userSchema
+const UserModel = mongoose.model('User', userSchema, 'Users')
+
+export {userSchema, UserModel}

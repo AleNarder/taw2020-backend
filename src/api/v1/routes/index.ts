@@ -1,4 +1,6 @@
 import * as express from 'express'
+
+// Controllers
 import user from '../controllers/users'
 import books from '../controllers/books'
 import chats from '../controllers/chats'
@@ -43,6 +45,9 @@ router
   .delete(user.DELETE.user)
   .put(user.PUT.userProperty)
 
+router
+    .route('/user')
+    .post(user.POST.user)
   
 /******************************
  * BOOKS SECTION
@@ -50,16 +55,17 @@ router
 router
   .route('/books')
 
-
-
 /******************************
  * AUCTIONS SECTION
  */
 router
   .route('/auctions')
+  .get(auctions.GET.auctions)
+  .post(auctions.POST.auction)
 
 router
   .route('/auction/:auctionId')
+  .get(auctions.GET.auction)
 
  /******************************
  * CHATS SECTION

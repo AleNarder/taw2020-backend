@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
-const auction_1 = require("./auction");
 const book_1 = require("./book");
 const userSchema = new mongoose.Schema({
     firstname: {
@@ -25,7 +24,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    province: {
+        type: String,
+        required: true
+    },
+    cap: {
+        type: String,
+        required: true
+    },
     address: {
+        type: String,
+        required: true
+    },
+    location: {
         type: {
             type: String,
             enum: ['Point'],
@@ -37,7 +48,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     books: [book_1.default],
-    auctions: [auction_1.default]
 });
-mongoose.model('User', userSchema, 'Users');
-exports.default = userSchema;
+exports.userSchema = userSchema;
+const UserModel = mongoose.model('User', userSchema, 'Users');
+exports.UserModel = UserModel;

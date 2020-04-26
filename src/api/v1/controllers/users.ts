@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose'
+import { UserModel } from './../models/user'
 
 export default {
   GET: {
@@ -9,8 +9,9 @@ export default {
      * @param res response
      * @param next next function to execute in the pipeline
      */
-    users: function (req, res, next) {
-
+    users: async function (req, res, next) {
+      const users = await UserModel.find().exec()
+      res.send(users)
     },
     /**
      * Get single user info
@@ -20,7 +21,6 @@ export default {
      * @param next next function to execute in the pipeline
      */
     user: function (req, res, next) {
-
     }
   },
   POST: {
@@ -31,8 +31,16 @@ export default {
      * @param res response
      * @param next next function to execute in the pipeline
      */
-    user: function (req, res, next) {
+    user: async function (req, res, next) {
 
+      const user = new UserModel(req.body)
+      try {
+        await user.save()
+        res.send(true)
+      } catch (e) {
+        console.log(e)
+        res.send(false)
+      }
     }
   },
   PUT: {

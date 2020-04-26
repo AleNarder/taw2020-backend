@@ -1,5 +1,4 @@
 import * as mongoose from 'mongoose'
-import userSchema from './user'
 
 const bookSchema = new mongoose.Schema({
   title: {
@@ -17,8 +16,7 @@ const bookSchema = new mongoose.Schema({
   university: {
     type: String,
     required: true
-  },
-  owner: [userSchema]
+  }
 })
 
 mongoose.model('Book', bookSchema, 'Books')

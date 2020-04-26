@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+// Controllers
 const users_1 = require("../controllers/users");
 const chats_1 = require("../controllers/chats");
+const auctions_1 = require("../controllers/auctions");
 const logger_1 = require("../controllers/logger");
 const router = express.Router();
 /******************************
@@ -34,6 +36,9 @@ router
     .get(users_1.default.GET.user)
     .delete(users_1.default.DELETE.user)
     .put(users_1.default.PUT.userProperty);
+router
+    .route('/user')
+    .post(users_1.default.POST.user);
 /******************************
  * BOOKS SECTION
  */
@@ -43,9 +48,12 @@ router
  * AUCTIONS SECTION
  */
 router
-    .route('/auctions');
+    .route('/auctions')
+    .get(auctions_1.default.GET.auctions)
+    .post(auctions_1.default.POST.auction);
 router
-    .route('/auction/:auctionId');
+    .route('/auction/:auctionId')
+    .get(auctions_1.default.GET.auction);
 /******************************
 * CHATS SECTION
 */

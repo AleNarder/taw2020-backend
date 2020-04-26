@@ -10,23 +10,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
-class DbUtils {
+const Interruptable_1 = require("../../../utils/Interruptable");
+class DbUtils extends Interruptable_1.default {
+    constructor() {
+        super();
+    }
     /**
      * Establish a mongoose connection
      */
-    static connect() {
+    connect() {
         return __awaiter(this, void 0, void 0, function* () {
             let isConnected = true;
             try {
                 this.setCallbacks();
                 yield mongoose.connect([
                     `mongodb://`,
-                    `${this.username}`,
-                    `:${this.password}`,
-                    `@${this.host}`,
-                    `:${this.port}`,
-                    `/${this.database}`
-                ].join(''), this.options);
+                    `${DbUtils.username}`,
+                    `:${DbUtils.password}`,
+                    `@${DbUtils.host}`,
+                    `:${DbUtils.port}`,
+                    `/${DbUtils.database}`
+                ].join(''), DbUtils.options);
             }
             catch (err) {
                 console.error(err.reason);
@@ -42,13 +46,12 @@ class DbUtils {
      * @param msg
      * @param callback
      */
-    static close(msg, callback) {
+    close(msg) {
         return __awaiter(this, void 0, void 0, function* () {
             let isClosed = true;
             try {
                 yield mongoose.connection.close(() => {
                     console.log(`Mongoose disconnected through ${msg}`);
-                    callback();
                 });
             }
             catch (err) {
@@ -60,53 +63,43 @@ class DbUtils {
             }
         });
     }
-    static setCallbacks() {
+    setCallbacks() {
         mongoose.connection.on('connected', this.connectedCallback);
         mongoose.connection.on('error', this.errorCallback);
-        mongoose.connection.on('disconnected', this.disconnectedCallback);
     }
-    static connectedCallback() {
+    connectedCallback() {
         console.log('Mongoose connected');
     }
-    static disconnectedCallback() {
-        console.log('Mongoose disconnected');
-    }
-    static errorCallback(error) {
+    errorCallback(error) {
         console.error(`Mongoose error: ${error}`);
     }
+    sigint() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const disconnected = yield this.close('sigint');
+            return disconnected;
+        });
+    }
+    sigterm() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const disconnected = yield this.close('sigterm');
+            return disconnected;
+        });
+    }
+    sigusr2() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const disconnected = yield this.close('sigusr2');
+            return disconnected;
+        });
+    }
 }
-DbUtils.username = 'heroku_v868mw88';
-DbUtils.password = 'lfi13lqoa66h6bf56das06dthg';
-DbUtils.database = 'heroku_v868mw88';
-DbUtils.host = 'ds251799.mlab.com';
-DbUtils.port = 51799;
+DbUtils.username = process.env.DB_USERNAME;
+DbUtils.password = process.env.DB_PASSWORD;
+DbUtils.database = process.env.DB_DATABASE;
+DbUtils.host = process.env.DB_HOST;
+DbUtils.port = process.env.DB_PORT;
 DbUtils.options = {
     useNewUrlParser: true,
     poolSize: 10,
     useUnifiedTopology: true
 };
-/**
- * Nodemon restarted
- */
-process.once('SIGUSR2', () => {
-    DbUtils.close('nodemon restart', () => {
-        process.kill(process.pid, 'SIGUSR2');
-    });
-});
-/**
- * Heroku closes the app
- */
-process.on('SIGTERM', () => __awaiter(void 0, void 0, void 0, function* () {
-    DbUtils.close('Heroku shutdown', () => {
-        process.exit(0);
-    });
-}));
-/**
- * App has been terminated by SIGINT
- */
-process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
-    DbUtils.close('app termination', () => {
-        process.exit(0);
-    });
-}));
 exports.default = DbUtils;

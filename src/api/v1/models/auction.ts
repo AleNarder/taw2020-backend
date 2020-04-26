@@ -1,6 +1,4 @@
 import * as mongoose from 'mongoose'
-import bookSchema from './book'
-import userSchema from './user'
 
 const auctionSchema = new mongoose.Schema({
   created: {
@@ -20,10 +18,7 @@ const auctionSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     required: true
-  },
-  buyer: [userSchema],
-  seller: [userSchema],
-  book: [bookSchema]
+  }
 })
 
 mongoose.model('Auction', auctionSchema, 'Autction')

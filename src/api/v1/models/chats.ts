@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose'
-import auctionSchema from './auction'
-import messageSchema from './message'
+import auctionSchema from "./auction";
+import userSchema from "./user";
 
 const chatSchema = new mongoose.Schema({
   public: {
@@ -8,7 +8,7 @@ const chatSchema = new mongoose.Schema({
     required: true
   },
   auction: [auctionSchema],
-  messages: [messageSchema]
+  sender: [userSchema]
 })
 
 mongoose.model('Chat', chatSchema, 'Chats')

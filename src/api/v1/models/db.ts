@@ -1,13 +1,14 @@
 import * as mongoose from 'mongoose'
+import Interruptable from '../../../utils/Interruptable'
 import { Db } from 'mongodb'
 
-class DbUtils {
+class DbUtils extends Interruptable {
   
-  private static username = 'heroku_v868mw88'
-  private static password = 'lfi13lqoa66h6bf56das06dthg'
-  private static database = 'heroku_v868mw88'
-  private static host = 'ds251799.mlab.com'
-  private static port = 51799
+  private static username = process.env.DB_USERNAME
+  private static password = process.env.DB_PASSWORD
+  private static database = process.env.DB_DATABASE
+  private static host = process.env.DB_HOST
+  private static port = process.env.DB_PORT
   
   private static options = {
     useNewUrlParser: true,
@@ -15,21 +16,25 @@ class DbUtils {
     useUnifiedTopology: true
   }
 
+  constructor () {
+    super()
+  }
+
   /**
    * Establish a mongoose connection
    */
-  public static async connect (): Promise<boolean> {
+  public async connect (): Promise<boolean> {
     let isConnected = true
     try {
       this.setCallbacks()
       await mongoose.connect([
         `mongodb://`,
-        `${this.username}`,
-        `:${this.password}`,
-        `@${this.host}`,
-        `:${this.port}`,
-        `/${this.database}`
-      ].join(''), this.options)
+        `${DbUtils.username}`,
+        `:${DbUtils.password}`,
+        `@${DbUtils.host}`,
+        `:${DbUtils.port}`,
+        `/${DbUtils.database}`
+      ].join(''), DbUtils.options)
     } catch (err) {
       console.error(err.reason)
       isConnected = false
@@ -43,12 +48,11 @@ class DbUtils {
    * @param msg 
    * @param callback 
    */
-  public static async close (msg?: string, callback?: Function): Promise<boolean> {
+  public async close (msg: string): Promise<boolean> {
     let isClosed = true
     try {
       await mongoose.connection.close(() => {
         console.log(`Mongoose disconnected through ${msg}`)
-        callback()
       })
     } catch (err) {
       console.error(err)
@@ -58,51 +62,33 @@ class DbUtils {
     }
   }
 
-  private static setCallbacks (): void {
+  private setCallbacks (): void {
     mongoose.connection.on('connected', this.connectedCallback)
     mongoose.connection.on('error', this.errorCallback)
-    mongoose.connection.on('disconnected', this.disconnectedCallback)
   }
 
-  private static connectedCallback (): void {
+  private connectedCallback (): void {
     console.log('Mongoose connected')
   }
 
-  private static disconnectedCallback (): void {
-    console.log('Mongoose disconnected')
-  }
-
-  private static errorCallback (error): void {
+  private errorCallback (error): void {
     console.error(`Mongoose error: ${error}`)
   }
 
+  public async sigint(): Promise<Boolean> {
+    const disconnected = await this.close('sigint')
+    return disconnected
+  }
+  public async sigterm(): Promise<Boolean> {
+    const disconnected = await this.close('sigterm')
+    return disconnected
+  }
+  
+  public async sigusr2(): Promise<Boolean> {
+    const disconnected = await this.close('sigusr2')
+    return disconnected
+  }
+
 }
-
-/**
- * Nodemon restarted
- */
-process.once('SIGUSR2',() => {
-  DbUtils.close('nodemon restart', () => {
-    process.kill(process.pid, 'SIGUSR2')
-  })
-})
-
-/**
- * Heroku closes the app
- */
-process.on('SIGTERM', async () => {
-  DbUtils.close('Heroku shutdown', () => {
-    process.exit(0)
-  })
-})
-
-/**
- * App has been terminated by SIGINT
- */
-process.on('SIGINT', async () => {
-  DbUtils.close('app termination', () => {
-    process.exit(0)
-  })  
-})
 
 export default DbUtils
