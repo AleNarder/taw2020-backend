@@ -19,5 +19,7 @@ const bookSchema = new mongoose.Schema({
         required: true
     }
 });
-mongoose.model('Book', bookSchema, 'Books');
-exports.default = bookSchema;
+exports.bookSchema = bookSchema;
+const BookModel = mongoose.model('Book', bookSchema, 'Books');
+exports.BookModel = BookModel;
+//# sourceMappingURL=book.js.map

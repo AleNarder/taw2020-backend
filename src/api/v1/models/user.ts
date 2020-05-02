@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose'
-import bookSchema from './book'
+import {auctionSchema} from "./auction";
 
 const userSchema = new mongoose.Schema({
 
@@ -23,20 +23,23 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 8
   },
-
   email: {
-    type: String,
-    required: true
-  }, 
-  province: {
-    type: String,
-    required: true
-  },
-  cap: {
     type: String,
     required: true
   },
   address: {
+    type: String,
+    required: true
+  },
+  state: {
+    type: String,
+    required: true
+  },
+  zipcode: {
+    type: String,
+    required: true
+  },
+  country: {
     type: String,
     required: true
   },
@@ -45,15 +48,18 @@ const userSchema = new mongoose.Schema({
       type: String,
       enum: ['Point'],
       required: true 
-    }    
+    } ,
+    coordinates: {
+      type: [Number],
+      required: true
+    }
   },
 
   moderator: {
     type: Boolean,
     required: true
   },
-
-  books: [bookSchema],
+  auctions: [auctionSchema]
 })
 
 const UserModel = mongoose.model('User', userSchema, 'Users')

@@ -30,3 +30,4 @@ exports.default = {
         }
     },
 };
+//# sourceMappingURL=chats.js.map

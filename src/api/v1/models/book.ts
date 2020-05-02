@@ -19,5 +19,5 @@ const bookSchema = new mongoose.Schema({
   }
 })
 
-mongoose.model('Book', bookSchema, 'Books')
-export default bookSchema
+const BookModel = mongoose.model('Book', bookSchema, 'Books')
+export { bookSchema, BookModel }

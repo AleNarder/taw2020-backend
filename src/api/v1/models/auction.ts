@@ -1,4 +1,7 @@
 import * as mongoose from 'mongoose'
+import { bookSchema } from './book'
+import { messageSchema } from './message'
+
 
 const auctionSchema = new mongoose.Schema({
   created: {
@@ -18,8 +21,10 @@ const auctionSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     required: true
-  }
+  },
+  book: [bookSchema],
+  chat: [messageSchema]
 })
 
-mongoose.model('Auction', auctionSchema, 'Autction')
-export default auctionSchema
+const AuctionModel = mongoose.model('Auction', auctionSchema, 'Autction')
+export { auctionSchema, AuctionModel }

@@ -5,7 +5,13 @@ import user from '../controllers/users'
 import books from '../controllers/books'
 import chats from '../controllers/chats'
 import auctions from '../controllers/auctions'
-import logger from '../controllers/logger'
+import auth from '../controllers/auth'
+import success from '../middlewares/success'
+
+import * as passport from 'passport'
+import enableUSPWauth from '../middlewares/auth/login'
+import { JWTauth, enableJWTauth } from '../middlewares/auth/jwt'
+
 
 const router = express.Router()
 
@@ -13,59 +19,68 @@ const router = express.Router()
 /******************************
  * GUARD SECTION
  */
-router.use((req, res, next) => {
-  next()
-})
+
+enableUSPWauth()
+enableJWTauth()
 
 /******************************
- * LOGGER SECTION
+ * AUTH SECTION
  */
 router
-  .route('/signin')
-  .post(logger.POST.signin)
+  .route('/auth/signin')
+  .post(auth.POST.signin, success)
 
 router
-  .route('/login')
-  .post(logger.POST.login)
+  .route('/auth/login')
+  .post(auth.POST.login, success)
 
 router
-  .route('/logout')
-  .post(logger.POST.logout)
+  .route('/auth/logout')
+  .post(JWTauth, auth.POST.logout, success)
   
 /******************************
  * USER SECTION
  */
 router
   .route('/users')
-  .get(user.GET.users)
+  .get(JWTauth, user.GET.users, success)
 
 router
   .route('/users/:userId')
-  .get(user.GET.user)
-  .delete(user.DELETE.user)
-  .put(user.PUT.userProperty)
+  .get(JWTauth, user.GET.user, success)
+  .delete(JWTauth, user.DELETE.user, success)
+  .put(JWTauth, user.PUT.userProperty, success)
 
 router
-    .route('/user')
-    .post(user.POST.user)
+  .route('/user')
+  .post(JWTauth, user.POST.user, success)
   
 /******************************
  * BOOKS SECTION
  */
+
 router
   .route('/books')
+  .get(books.GET.books)
+
+router
+  .route('/books/:bookId')
+  .put(books.PUT.book)
+  .get(books.GET.book)
 
 /******************************
  * AUCTIONS SECTION
  */
 router
   .route('/auctions')
-  .get(auctions.GET.auctions)
-  .post(auctions.POST.auction)
+  .get(auctions.GET.auctions, success)
+  .post(auctions.POST.auction, success)
 
 router
-  .route('/auction/:auctionId')
-  .get(auctions.GET.auction)
+  .route('/auction/:userId/:auctionId')
+  .get(auctions.GET.auction, success)
+  .put(auctions.PUT.auctionProperty, success)
+  .delete(auctions.DELETE.auction, success)
 
  /******************************
  * CHATS SECTION
@@ -73,15 +88,15 @@ router
 
 router
   .route('/chats/public/:auctionId')
-  .get(chats.GET.public)
+  .get(chats.GET.public, success)
 
 router
   .route('/chats/private/:auctionId/user/:userId')
-  .get(chats.GET.private)
+  .get(chats.GET.private, success)
 
 router
   .route('/chats/send/:chatId')
-  .post(chats.POST.message)
+  .post(chats.POST.message, success)
 
 
 export default router

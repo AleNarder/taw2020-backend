@@ -7,3 +7,4 @@ router
     .route('/')
     .get(status_1.default.GET.status);
 exports.default = router;
+//# sourceMappingURL=index.js.map

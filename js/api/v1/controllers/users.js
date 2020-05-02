@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("./../models/user");
+const Geocoder = require("node-geocoder");
+const ErrorHandler_1 = require("../../../helpers/ErrorHandler");
 exports.default = {
     GET: {
         /**
@@ -21,8 +23,20 @@ exports.default = {
          */
         users: function (req, res, next) {
             return __awaiter(this, void 0, void 0, function* () {
-                const users = yield user_1.UserModel.find().exec();
-                res.send(users);
+                try {
+                    user_1.UserModel.find((err, res) => {
+                        if (!err) {
+                            req.payload = res;
+                            next();
+                        }
+                        else {
+                            throw new ErrorHandler_1.default(500, 'Collection not reachable');
+                        }
+                    });
+                }
+                catch (e) {
+                    next(e);
+                }
             });
         },
         /**
@@ -33,6 +47,20 @@ exports.default = {
          * @param next next function to execute in the pipeline
          */
         user: function (req, res, next) {
+            try {
+                user_1.UserModel.findById(req.params.userId, (err, res) => {
+                    if (!err) {
+                        req.payload = res;
+                        next();
+                    }
+                    else {
+                        throw new ErrorHandler_1.default(500, 'Collection not reachable');
+                    }
+                });
+            }
+            catch (e) {
+                next(e);
+            }
         }
     },
     POST: {
@@ -45,14 +73,28 @@ exports.default = {
          */
         user: function (req, res, next) {
             return __awaiter(this, void 0, void 0, function* () {
-                const user = new user_1.UserModel(req.body);
                 try {
-                    yield user.save();
-                    res.send(true);
+                    const options = {
+                        provider: 'locationiq',
+                        apiKey: process.env.GEOCODER_API_KEY
+                    };
+                    const geocoder = Geocoder(options);
+                    const { address, zipcode, state, country } = req.body;
+                    const { latitude, longitude } = (yield geocoder.geocode(`${address}, ${zipcode}, ${state}, ${country}`))[0];
+                    req.body.location = { type: 'Point', 'coordinates': [longitude, latitude] };
+                    const user = new user_1.UserModel(req.body);
+                    user.save(null, (err, res) => {
+                        if (!err) {
+                            req.payload = res;
+                            next();
+                        }
+                        else {
+                            throw new ErrorHandler_1.default(500, 'User not saved');
+                        }
+                    });
                 }
                 catch (e) {
-                    console.log(e);
-                    res.send(false);
+                    next(e);
                 }
             });
         }
@@ -66,6 +108,20 @@ exports.default = {
          * @param next next function to execute in the pipeline
          */
         userProperty: function (req, res, next) {
+            try {
+                user_1.UserModel.findByIdAndUpdate(req.params.userId, req.body, (err, res) => {
+                    if (!err) {
+                        req.payload = res;
+                    }
+                    else {
+                        throw new ErrorHandler_1.default(500, 'User not updated');
+                    }
+                });
+                next();
+            }
+            catch (e) {
+                next(e);
+            }
         }
     },
     DELETE: {
@@ -77,6 +133,23 @@ exports.default = {
          * @param next next function to execute in the pipeline
          */
         user: function (req, res, next) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    user_1.UserModel.findByIdAndDelete(req.params.userId, (err, res) => {
+                        if (!err) {
+                            req.payload = res;
+                            next();
+                        }
+                        else {
+                            throw new ErrorHandler_1.default(500, 'User not deleted');
+                        }
+                    });
+                }
+                catch (e) {
+                    next(e);
+                }
+            });
         }
     }
 };
+//# sourceMappingURL=users.js.map

@@ -1,23 +1,17 @@
 import * as mongoose from 'mongoose'
-import Interruptable from '../../../utils/Interruptable'
-import { Db } from 'mongodb'
 
-class DbUtils extends Interruptable {
+class DbUtils {
   
   private static username = process.env.DB_USERNAME
   private static password = process.env.DB_PASSWORD
   private static database = process.env.DB_DATABASE
   private static host = process.env.DB_HOST
   private static port = process.env.DB_PORT
-  
+
   private static options = {
     useNewUrlParser: true,
     poolSize: 10,
     useUnifiedTopology: true
-  }
-
-  constructor () {
-    super()
   }
 
   /**

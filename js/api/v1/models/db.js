@@ -10,11 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
-const Interruptable_1 = require("../../../utils/Interruptable");
-class DbUtils extends Interruptable_1.default {
-    constructor() {
-        super();
-    }
+class DbUtils {
     /**
      * Establish a mongoose connection
      */
@@ -103,3 +99,4 @@ DbUtils.options = {
     useUnifiedTopology: true
 };
 exports.default = DbUtils;
+//# sourceMappingURL=db.js.map

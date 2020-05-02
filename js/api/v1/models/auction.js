@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
+const book_1 = require("./book");
+const message_1 = require("./message");
 const auctionSchema = new mongoose.Schema({
     created: {
         type: Date,
@@ -19,7 +21,11 @@ const auctionSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         required: true
-    }
+    },
+    book: [book_1.bookSchema],
+    chat: [message_1.messageSchema]
 });
-mongoose.model('Auction', auctionSchema, 'Autction');
-exports.default = auctionSchema;
+exports.auctionSchema = auctionSchema;
+const AuctionModel = mongoose.model('Auction', auctionSchema, 'Autction');
+exports.AuctionModel = AuctionModel;
+//# sourceMappingURL=auction.js.map
