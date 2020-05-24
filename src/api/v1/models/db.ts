@@ -1,12 +1,15 @@
 import * as mongoose from 'mongoose'
+import { Interruptable } from './../../../helpers/Interruptable'
 
-class DbUtils {
+class DbUtils implements Interruptable {
   
   private static username = process.env.DB_USERNAME
   private static password = process.env.DB_PASSWORD
   private static database = process.env.DB_DATABASE
   private static host = process.env.DB_HOST
   private static port = process.env.DB_PORT
+
+  private static tag = '[MONGOOSE]:'
 
   private static options = {
     useNewUrlParser: true,
@@ -46,7 +49,7 @@ class DbUtils {
     let isClosed = true
     try {
       await mongoose.connection.close(() => {
-        console.log(`Mongoose disconnected through ${msg}`)
+        console.log(`${DbUtils.tag} disconnected through ${msg}`)
       })
     } catch (err) {
       console.error(err)
@@ -62,11 +65,11 @@ class DbUtils {
   }
 
   private connectedCallback (): void {
-    console.log('Mongoose connected')
+    console.log(`${DbUtils.tag} connected`)
   }
 
   private errorCallback (error): void {
-    console.error(`Mongoose error: ${error}`)
+    console.error(`${DbUtils.tag} error: ${error}`)
   }
 
   public async sigint(): Promise<Boolean> {

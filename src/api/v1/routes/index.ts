@@ -9,8 +9,8 @@ import auth from '../controllers/auth'
 import success from '../middlewares/success'
 
 import * as passport from 'passport'
-import enableUSPWauth from '../middlewares/auth/login'
-import { JWTauth, enableJWTauth } from '../middlewares/auth/jwt'
+import { enableLoginAuth } from '../middlewares/auth/login'
+import { enableJWTAuth } from '../middlewares/auth/jwt'
 
 
 const router = express.Router()
@@ -20,15 +20,17 @@ const router = express.Router()
  * GUARD SECTION
  */
 
-enableUSPWauth()
-enableJWTauth()
+enableLoginAuth()
+enableJWTAuth()
+const JWTauth = passport.authenticate('jwt', {session: false})
+
 
 /******************************
  * AUTH SECTION
  */
 router
-  .route('/auth/signin')
-  .post(auth.POST.signin, success)
+  .route('/auth/register')
+  .post(auth.POST.register, success)
 
 router
   .route('/auth/login')

@@ -11,19 +11,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = require("dotenv");
 dotenv.config();
+const http = require("http");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const routes_1 = require("./api/v1/routes");
 const routes_2 = require("./api/index/routes");
 const db_1 = require("./api/v1/models/db");
+const socket_1 = require("./chat/socket");
 function check(...args) {
     const reducer = (acc, x) => acc && x;
     return args.reduce(reducer);
 }
+function interrupt(...arg) {
+    //TODO
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        const tag = '[SERVER]:';
         const app = express();
+        const server = http.createServer(app);
+        const socket = new socket_1.default(server);
         const conn = yield new db_1.default().connect();
         const port = process.env.PORT || 5000;
         if (check(conn)) {
@@ -31,12 +39,12 @@ function main() {
             app.use(cors());
             app.use('/api/v1/', routes_1.default);
             app.use('/', routes_2.default);
-            app.listen(port, () => {
-                console.log(`Server listening on: http://localhost:${port}`);
+            server.listen(port, () => {
+                console.log(`${tag} http://localhost:${port}`);
             });
         }
         else {
-            console.log(`Server is not listening`);
+            console.log(`[${tag} not listening`);
         }
     });
 }

@@ -1,5 +1,5 @@
 import { AuctionModel } from './../models/auction'
-import { UserModel} from '../models/user'
+import { UserModel, userSchema } from '../models/user'
 import ErrorHandler from '../../../helpers/ErrorHandler'
 
 export default {
@@ -52,7 +52,7 @@ export default {
     auction: async function (req, res, next) {
       try {
         const {userId, auctionId} = req.params
-        const user = await UserModel.findById(userId)
+        const user = <any> await UserModel.findById(userId)
         if (user) {
           req.payload = user.auctions.id(auctionId)
           next()
@@ -73,7 +73,7 @@ export default {
       try {
         const {userId, auctionId} = req.params
         const { payload } = req.body
-        const user = await UserModel.findById(userId)
+        const user = <any> await UserModel.findById(userId)
         const auction = user.auctions.id(auctionId)
         for (let key in payload) {
           auction[key] = payload[key]
@@ -98,8 +98,8 @@ export default {
      */
     auction: async function (req, res, next) {
       try {
-        const {userId, auctionId} = req.params
-        const user = await UserModel.findById(userId)
+        const { userId, auctionId } = req.params
+        const user = <any> await UserModel.findById(userId)
         const auction = user.auctions.id(auctionId)
         auction.isActive = false
         user.save((err, res)=> {

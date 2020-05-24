@@ -1,6 +1,5 @@
 import * as passport from 'passport'
 import * as jwt from 'jsonwebtoken'
-import ErrorHandler from '../../../helpers/ErrorHandler'
 
 export default {
   POST: {
@@ -14,13 +13,16 @@ export default {
       try {
         passport.authenticate('local', {session: false}, (err, user) => {
           if (err) {
-            throw new ErrorHandler(err.code, err.msg)
+            res.status(err.code).send({
+              status: 'error',
+              payload: err.msg
+            })
           } else {
             req.payload = {
-              token: jwt.sign(user, process.env.JWT_ENCRYPTION, {
-                expiresIn: '12h'
+              token: jwt.sign({id: user.res._id}, process.env.JWT_ENCRYPTION, {
+                expiresIn: '1h'
               }),
-              user
+              user: user.res
             }
             next()
           }
@@ -44,7 +46,7 @@ export default {
      * @param res 
      * @param next 
      */
-    signin: function (req, res, next) {
+    register: function (req, res, next) {
 
     }
   }

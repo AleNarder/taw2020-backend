@@ -7,12 +7,17 @@ const options = {
     jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_ENCRYPTION
 };
-function enableJWTauth() {
+function enableJWTAuth() {
     passport.use(new passport_jwt_1.Strategy(options, function (payload, done) {
-        user_1.UserModel.findById(payload.id, (err, res) => done(err, { res }));
+        user_1.UserModel.findById(payload.id, function (err, res) {
+            if (res) {
+                return done(null, true);
+            }
+            else {
+                return done(null, true);
+            }
+        });
     }));
 }
-exports.enableJWTauth = enableJWTauth;
-const JWTauth = passport.authenticate('jwt', { session: false });
-exports.JWTauth = JWTauth;
+exports.enableJWTAuth = enableJWTAuth;
 //# sourceMappingURL=jwt.js.map

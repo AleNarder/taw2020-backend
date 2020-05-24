@@ -1,7 +1,15 @@
 import * as mongoose from 'mongoose'
 import { bookSchema } from './book'
-import { messageSchema } from './message'
+import { chatSchema } from '../../../chat/models/chat'
 
+interface auctionType extends mongoose.Document {
+  created: Date,
+  threshold: Number,
+  currentPrice: Number,
+  isActive: Boolean,
+  book: Object,
+  chat: Object,
+}
 
 const auctionSchema = new mongoose.Schema({
   created: {
@@ -23,8 +31,11 @@ const auctionSchema = new mongoose.Schema({
     required: true
   },
   book: [bookSchema],
-  chat: [messageSchema]
+  chat: {
+    required: false,
+    type: chatSchema
+  }
 })
 
-const AuctionModel = mongoose.model('Auction', auctionSchema, 'Autction')
+const AuctionModel = mongoose.model<auctionType>('Auction', auctionSchema, 'Autction')
 export { auctionSchema, AuctionModel }

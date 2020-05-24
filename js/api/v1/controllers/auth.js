@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const ErrorHandler_1 = require("../../../helpers/ErrorHandler");
 exports.default = {
     POST: {
         /**
@@ -15,14 +14,17 @@ exports.default = {
             try {
                 passport.authenticate('local', { session: false }, (err, user) => {
                     if (err) {
-                        throw new ErrorHandler_1.default(err.code, err.msg);
+                        res.status(err.code).send({
+                            status: 'error',
+                            payload: err.msg
+                        });
                     }
                     else {
                         req.payload = {
-                            token: jwt.sign(user, process.env.JWT_ENCRYPTION, {
-                                expiresIn: '12h'
+                            token: jwt.sign({ id: user.res._id }, process.env.JWT_ENCRYPTION, {
+                                expiresIn: '1h'
                             }),
-                            user
+                            user: user.res
                         };
                         next();
                     }
@@ -46,7 +48,7 @@ exports.default = {
          * @param res
          * @param next
          */
-        signin: function (req, res, next) {
+        register: function (req, res, next) {
         }
     }
 };

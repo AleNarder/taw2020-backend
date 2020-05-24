@@ -8,40 +8,42 @@ const chats_1 = require("../controllers/chats");
 const auctions_1 = require("../controllers/auctions");
 const auth_1 = require("../controllers/auth");
 const success_1 = require("../middlewares/success");
+const passport = require("passport");
 const login_1 = require("../middlewares/auth/login");
 const jwt_1 = require("../middlewares/auth/jwt");
 const router = express.Router();
 /******************************
  * GUARD SECTION
  */
-login_1.default();
-jwt_1.enableJWTauth();
+login_1.enableLoginAuth();
+jwt_1.enableJWTAuth();
+const JWTauth = passport.authenticate('jwt', { session: false });
 /******************************
  * AUTH SECTION
  */
 router
-    .route('/auth/signin')
-    .post(auth_1.default.POST.signin, success_1.default);
+    .route('/auth/register')
+    .post(auth_1.default.POST.register, success_1.default);
 router
     .route('/auth/login')
     .post(auth_1.default.POST.login, success_1.default);
 router
     .route('/auth/logout')
-    .post(jwt_1.JWTauth, auth_1.default.POST.logout, success_1.default);
+    .post(JWTauth, auth_1.default.POST.logout, success_1.default);
 /******************************
  * USER SECTION
  */
 router
     .route('/users')
-    .get(jwt_1.JWTauth, users_1.default.GET.users, success_1.default);
+    .get(JWTauth, users_1.default.GET.users, success_1.default);
 router
     .route('/users/:userId')
-    .get(jwt_1.JWTauth, users_1.default.GET.user, success_1.default)
-    .delete(jwt_1.JWTauth, users_1.default.DELETE.user, success_1.default)
-    .put(jwt_1.JWTauth, users_1.default.PUT.userProperty, success_1.default);
+    .get(JWTauth, users_1.default.GET.user, success_1.default)
+    .delete(JWTauth, users_1.default.DELETE.user, success_1.default)
+    .put(JWTauth, users_1.default.PUT.userProperty, success_1.default);
 router
     .route('/user')
-    .post(jwt_1.JWTauth, users_1.default.POST.user, success_1.default);
+    .post(JWTauth, users_1.default.POST.user, success_1.default);
 /******************************
  * BOOKS SECTION
  */

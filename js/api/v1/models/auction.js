@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 const book_1 = require("./book");
-const message_1 = require("./message");
+const chat_1 = require("../../../chat/models/chat");
 const auctionSchema = new mongoose.Schema({
     created: {
         type: Date,
@@ -23,7 +23,10 @@ const auctionSchema = new mongoose.Schema({
         required: true
     },
     book: [book_1.bookSchema],
-    chat: [message_1.messageSchema]
+    chat: {
+        required: false,
+        type: chat_1.chatSchema
+    }
 });
 exports.auctionSchema = auctionSchema;
 const AuctionModel = mongoose.model('Auction', auctionSchema, 'Autction');

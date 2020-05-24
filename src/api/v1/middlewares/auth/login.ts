@@ -1,15 +1,12 @@
 import * as passport from 'passport'
-import { Strategy,  } from 'passport-local'
+import { Strategy } from 'passport-local'
 import { UserModel } from '../../models/user'
 
-export default function enableLogin () {
+function enableLoginAuth () {
   passport.use(
-    new Strategy({
-      usernameField: 'username',
-      passwordField: 'password'
-    }, function (username, password, done) {
-      UserModel.find({
-        username,
+    new Strategy( function (email, password, done) {
+      UserModel.findOne({
+        email,
         password
       }, function (err, res) {
         if (!err) {
@@ -31,3 +28,4 @@ export default function enableLogin () {
   )
 }
 
+export { enableLoginAuth }

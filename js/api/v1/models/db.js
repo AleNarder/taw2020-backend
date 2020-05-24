@@ -47,7 +47,7 @@ class DbUtils {
             let isClosed = true;
             try {
                 yield mongoose.connection.close(() => {
-                    console.log(`Mongoose disconnected through ${msg}`);
+                    console.log(`${DbUtils.tag} disconnected through ${msg}`);
                 });
             }
             catch (err) {
@@ -64,10 +64,10 @@ class DbUtils {
         mongoose.connection.on('error', this.errorCallback);
     }
     connectedCallback() {
-        console.log('Mongoose connected');
+        console.log(`${DbUtils.tag} connected`);
     }
     errorCallback(error) {
-        console.error(`Mongoose error: ${error}`);
+        console.error(`${DbUtils.tag} error: ${error}`);
     }
     sigint() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -93,6 +93,7 @@ DbUtils.password = process.env.DB_PASSWORD;
 DbUtils.database = process.env.DB_DATABASE;
 DbUtils.host = process.env.DB_HOST;
 DbUtils.port = process.env.DB_PORT;
+DbUtils.tag = '[MONGOOSE]:';
 DbUtils.options = {
     useNewUrlParser: true,
     poolSize: 10,
