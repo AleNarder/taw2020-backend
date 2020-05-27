@@ -15,12 +15,12 @@ function enableLoginAuth () {
           } else {
             return done( {
               code: 400,
-              msg: 'Incorrect password or username'}, null)
+              msg: 'Password o username errati'}, null)
           }
         } else {
           return done({
             code: 500,
-            msg: 'Cannot find any user'
+            msg: 'Impossibile trovare alcun utente'
           }, null)
         }
       })

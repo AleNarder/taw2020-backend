@@ -22,14 +22,17 @@ const JWTauth = passport.authenticate('jwt', { session: false });
  * AUTH SECTION
  */
 router
-    .route('/auth/register')
-    .post(auth_1.default.POST.register, success_1.default);
+    .route('/auth/moderator')
+    .post(auth_1.default.POST.moderator, success_1.default);
 router
     .route('/auth/login')
     .post(auth_1.default.POST.login, success_1.default);
 router
     .route('/auth/logout')
     .post(JWTauth, auth_1.default.POST.logout, success_1.default);
+router
+    .route('/auth/reset')
+    .post(auth_1.default.POST.reset, success_1.default);
 /******************************
  * USER SECTION
  */
@@ -43,7 +46,7 @@ router
     .put(JWTauth, users_1.default.PUT.userProperty, success_1.default);
 router
     .route('/user')
-    .post(JWTauth, users_1.default.POST.user, success_1.default);
+    .post(users_1.default.POST.user, success_1.default);
 /******************************
  * BOOKS SECTION
  */

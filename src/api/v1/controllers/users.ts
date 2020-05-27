@@ -1,6 +1,8 @@
 import { UserModel } from './../models/user'
 import * as Geocoder from 'node-geocoder'
 import ErrorHandler from '../../../helpers/ErrorHandler'
+import EmailSender from '../../../email/EmailSender'
+import * as jwt from 'jsonwebtoken'
 
 
 export default {
@@ -69,8 +71,20 @@ export default {
         const user = new UserModel(req.body)
         user.save(null, (err, res) => {
           if (!err) {
-            req.payload = res
-            next()
+            const baseLink = `${process.env.CLIENT_BASE_URL}/login?id=${res._id}`
+            const token = jwt.sign({id: res._id}, process.env.JWT_ENCRYPTION, {
+              expiresIn: '1h'
+            })
+            const link = [baseLink, token].join('&tkn=')
+            EmailSender.sendEmail("confirm-user", req.body.email, link)
+            .then((value) => {
+              console.log('[NEW USER]: email inviata')
+              next()
+            })
+            .catch((error) => {
+              console.log('[NEW USER]: email inviata')
+              next(error) 
+            }) 
           } else {
             throw new ErrorHandler(500, 'User not saved')
           }
@@ -94,7 +108,7 @@ export default {
           if (!err) {
             req.payload = res
           } else {
-            throw new ErrorHandler(500, 'User not updated')
+            throw new ErrorHandler(500, 'Utente non aggiornato')
           }
         })
         next()

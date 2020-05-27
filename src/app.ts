@@ -11,6 +11,7 @@ import idxRouter from './api/index/routes'
 import DbUtils from './api/v1/models/db'
 import SocketUtils from './chat/socket'
 import { Interruptable } from './helpers/Interruptable'
+import error from './api/v1/middlewares/error'
 
 
 function check (...args: any) {
@@ -35,6 +36,9 @@ async function main () {
     app.use(cors())
     app.use('/api/v1/', apiRouter)
     app.use('/', idxRouter)
+    app.use(function(err, req, res, next) {
+      error(err, req, res, next)
+    })
     server.listen(port, () => {
       console.log(`${tag} http://localhost:${port}`)
     })

@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("./../models/user");
 const Geocoder = require("node-geocoder");
 const ErrorHandler_1 = require("../../../helpers/ErrorHandler");
+const EmailSender_1 = require("../../../email/EmailSender");
+const jwt = require("jsonwebtoken");
 exports.default = {
     GET: {
         /**
@@ -85,8 +87,20 @@ exports.default = {
                     const user = new user_1.UserModel(req.body);
                     user.save(null, (err, res) => {
                         if (!err) {
-                            req.payload = res;
-                            next();
+                            const baseLink = `${process.env.CLIENT_BASE_URL}/login?id=${res._id}`;
+                            const token = jwt.sign({ id: res._id }, process.env.JWT_ENCRYPTION, {
+                                expiresIn: '1h'
+                            });
+                            const link = [baseLink, token].join('&tkn=');
+                            EmailSender_1.default.sendEmail("confirm-user", req.body.email, link)
+                                .then((value) => {
+                                console.log('[NEW USER]: email inviata');
+                                next();
+                            })
+                                .catch((error) => {
+                                console.log('[NEW USER]: email inviata');
+                                next(error);
+                            });
                         }
                         else {
                             throw new ErrorHandler_1.default(500, 'User not saved');
@@ -114,7 +128,7 @@ exports.default = {
                         req.payload = res;
                     }
                     else {
-                        throw new ErrorHandler_1.default(500, 'User not updated');
+                        throw new ErrorHandler_1.default(500, 'Utente non aggiornato');
                     }
                 });
                 next();

@@ -59,6 +59,13 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: true
   },
+
+  confirmed: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+
   auctions: [auctionSchema]
 })
 

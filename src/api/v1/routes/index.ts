@@ -24,13 +24,12 @@ enableLoginAuth()
 enableJWTAuth()
 const JWTauth = passport.authenticate('jwt', {session: false})
 
-
 /******************************
  * AUTH SECTION
  */
 router
-  .route('/auth/register')
-  .post(auth.POST.register, success)
+  .route('/auth/moderator')
+  .post(auth.POST.moderator, success)
 
 router
   .route('/auth/login')
@@ -39,6 +38,11 @@ router
 router
   .route('/auth/logout')
   .post(JWTauth, auth.POST.logout, success)
+
+router
+  .route('/auth/reset')
+  .post(auth.POST.reset, success)
+
   
 /******************************
  * USER SECTION
@@ -55,7 +59,7 @@ router
 
 router
   .route('/user')
-  .post(JWTauth, user.POST.user, success)
+  .post(user.POST.user, success)
   
 /******************************
  * BOOKS SECTION

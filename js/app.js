@@ -19,6 +19,7 @@ const routes_1 = require("./api/v1/routes");
 const routes_2 = require("./api/index/routes");
 const db_1 = require("./api/v1/models/db");
 const socket_1 = require("./chat/socket");
+const error_1 = require("./api/v1/middlewares/error");
 function check(...args) {
     const reducer = (acc, x) => acc && x;
     return args.reduce(reducer);
@@ -39,6 +40,9 @@ function main() {
             app.use(cors());
             app.use('/api/v1/', routes_1.default);
             app.use('/', routes_2.default);
+            app.use(function (err, req, res, next) {
+                error_1.default(err, req, res, next);
+            });
             server.listen(port, () => {
                 console.log(`${tag} http://localhost:${port}`);
             });
