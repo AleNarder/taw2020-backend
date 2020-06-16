@@ -28,11 +28,11 @@ router
     .route('/auth/login')
     .post(auth_1.default.POST.login, success_1.default);
 router
-    .route('/auth/logout')
-    .post(JWTauth, auth_1.default.POST.logout, success_1.default);
-router
     .route('/auth/reset')
     .post(auth_1.default.POST.reset, success_1.default);
+router
+    .route('/auth/moderator')
+    .post(JWTauth, auth_1.default.POST.moderator, success_1.default);
 /******************************
  * USER SECTION
  */

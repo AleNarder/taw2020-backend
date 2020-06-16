@@ -80,31 +80,40 @@ exports.default = {
                         provider: 'locationiq',
                         apiKey: process.env.GEOCODER_API_KEY
                     };
-                    const geocoder = Geocoder(options);
-                    const { address, zipcode, state, country } = req.body;
-                    const { latitude, longitude } = (yield geocoder.geocode(`${address}, ${zipcode}, ${state}, ${country}`))[0];
-                    req.body.location = { type: 'Point', 'coordinates': [longitude, latitude] };
-                    const user = new user_1.UserModel(req.body);
-                    user.save(null, (err, res) => {
-                        if (!err) {
-                            const baseLink = `${process.env.CLIENT_BASE_URL}/login?id=${res._id}`;
-                            const token = jwt.sign({ id: res._id }, process.env.JWT_ENCRYPTION, {
-                                expiresIn: '1h'
-                            });
-                            const link = [baseLink, token].join('&tkn=');
-                            EmailSender_1.default.sendEmail("confirm-user", req.body.email, link)
-                                .then((value) => {
-                                console.log('[NEW USER]: email inviata');
-                                next();
-                            })
-                                .catch((error) => {
-                                console.log('[NEW USER]: email inviata');
-                                next(error);
-                            });
-                        }
-                        else {
-                            throw new ErrorHandler_1.default(500, 'User not saved');
-                        }
+                    user_1.UserModel.findOne({ email: req.body.email }, function (err, usr) {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (!usr) {
+                                const geocoder = Geocoder(options);
+                                const { address, zipcode, state, country } = req.body;
+                                const { latitude, longitude } = (yield geocoder.geocode(`${address}, ${zipcode}, ${state}, ${country}`))[0];
+                                req.body.location = { type: 'Point', 'coordinates': [longitude, latitude] };
+                                const user = new user_1.UserModel(req.body);
+                                user.save(null, (err, res) => {
+                                    if (!err) {
+                                        const baseLink = `${process.env.CLIENT_BASE_URL}/login?id=${res._id}`;
+                                        const token = jwt.sign({ id: res._id }, process.env.JWT_ENCRYPTION, {
+                                            expiresIn: '1h'
+                                        });
+                                        const link = [baseLink, token].join('&tkn=');
+                                        EmailSender_1.default.sendEmail("confirm-user", req.body.email, link)
+                                            .then((value) => {
+                                            console.log('[NEW USER]: email inviata');
+                                            next();
+                                        })
+                                            .catch((error) => {
+                                            console.log('[NEW USER]: email inviata');
+                                            next(error);
+                                        });
+                                    }
+                                    else {
+                                        next(new ErrorHandler_1.default(500, 'Utente non salvato'));
+                                    }
+                                });
+                            }
+                            else {
+                                next(new ErrorHandler_1.default(400, 'Utente già esistente'));
+                            }
+                        });
                     });
                 }
                 catch (e) {
@@ -155,12 +164,11 @@ exports.default = {
                             next();
                         }
                         else {
-                            throw new ErrorHandler_1.default(500, 'User not deleted');
+                            next(new ErrorHandler_1.default(500, 'User not deleted'));
                         }
                     });
                 }
                 catch (e) {
-                    next(e);
                 }
             });
         }

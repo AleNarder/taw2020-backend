@@ -36,13 +36,12 @@ router
   .post(auth.POST.login, success)
 
 router
-  .route('/auth/logout')
-  .post(JWTauth, auth.POST.logout, success)
-
-router
   .route('/auth/reset')
   .post(auth.POST.reset, success)
 
+router
+  .route('/auth/moderator')
+  .post(JWTauth, auth.POST.moderator, success)
   
 /******************************
  * USER SECTION

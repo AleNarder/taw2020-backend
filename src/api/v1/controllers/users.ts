@@ -64,29 +64,35 @@ export default {
           provider: 'locationiq',
           apiKey: process.env.GEOCODER_API_KEY
         }
-        const geocoder = Geocoder(options)
-        const {address, zipcode, state, country} = req.body
-        const {latitude, longitude} = (await geocoder.geocode(`${address}, ${zipcode}, ${state}, ${country}`))[0]
-        req.body.location = {type: 'Point', 'coordinates': [longitude, latitude]}
-        const user = new UserModel(req.body)
-        user.save(null, (err, res) => {
-          if (!err) {
-            const baseLink = `${process.env.CLIENT_BASE_URL}/login?id=${res._id}`
-            const token = jwt.sign({id: res._id}, process.env.JWT_ENCRYPTION, {
-              expiresIn: '1h'
-            })
-            const link = [baseLink, token].join('&tkn=')
-            EmailSender.sendEmail("confirm-user", req.body.email, link)
-            .then((value) => {
-              console.log('[NEW USER]: email inviata')
-              next()
-            })
-            .catch((error) => {
-              console.log('[NEW USER]: email inviata')
-              next(error) 
-            }) 
+        UserModel.findOne({email: req.body.email}, async function(err, usr) {
+          if (!usr) {
+            const geocoder = Geocoder(options)
+            const {address, zipcode, state, country} = req.body
+            const {latitude, longitude} = (await geocoder.geocode(`${address}, ${zipcode}, ${state}, ${country}`))[0]
+            req.body.location = {type: 'Point', 'coordinates': [longitude, latitude]}
+            const user = new UserModel(req.body)
+            user.save(null, (err, res) => {
+              if (!err) {
+                const baseLink = `${process.env.CLIENT_BASE_URL}/login?id=${res._id}`
+                const token = jwt.sign({id: res._id}, process.env.JWT_ENCRYPTION, {
+                  expiresIn: '1h'
+                })
+                const link = [baseLink, token].join('&tkn=')
+                EmailSender.sendEmail("confirm-user", req.body.email, link)
+                .then((value) => {
+                  console.log('[NEW USER]: email inviata')
+                  next()
+                })
+                .catch((error) => {
+                  console.log('[NEW USER]: email inviata')
+                  next(error) 
+                }) 
+              } else {
+                next(new ErrorHandler(500, 'Utente non salvato'))
+              }
+            })  
           } else {
-            throw new ErrorHandler(500, 'User not saved')
+            next(new ErrorHandler(400, 'Utente già esistente'))
           }
         })
       } catch (e) {
@@ -94,6 +100,7 @@ export default {
       }
     }
   },
+
   PUT: {
     /**
      * Modify user info or role
@@ -132,11 +139,11 @@ export default {
             req.payload = res
             next()
           } else {
-            throw new ErrorHandler(500, 'User not deleted')
+            next(new ErrorHandler(500, 'User not deleted'))
           }
         })
       } catch (e) {
-        next(e)
+        
       }
     }
   }

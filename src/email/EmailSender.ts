@@ -33,7 +33,7 @@ class EmailSender {
         case 'new-moderator':
           subject = 'Sei stato invitato come moderatore'
           btnText = 'Accedi'
-          html = newModerator(link, moderator, btnText)
+          html = newModerator(link, btnText)
         case 'confirm-user':
           subject = 'Benvenuto in taw 2020'
           btnText = 'Accedi'

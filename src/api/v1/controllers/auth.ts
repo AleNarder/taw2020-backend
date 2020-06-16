@@ -27,28 +27,40 @@ export default {
               }
               next()
               } else {
-                next(new ErrorHandler(400, 'Utente non confermato: controllata la tua casella email'))
+                next(new ErrorHandler(400, 'Utente non confermato: controlla la tua casella email'))
               }
             }
         })(req, res, next)
     },
-    moderator: function (req, res, next) {
-      const baselink = `${process.env.CLIENT_BASE_URL}/register?moderator=true`
-      const token = jwt.sign(req.body.moderator, process.env.JWT_ENCRYPTION, {
-        expiresIn: '1h'
-      })
-      const link = [baselink, token].join("?tkn=")
-      emailSender.sendEmail("new-moderator", req.body.email, link, req.body.moderator)
-    },
+
     /**
      * 
      * @param req 
      * @param res 
      * @param next 
      */
-    logout: function (req, res, next) {
-
+    moderator: function (req, res, next) {
+      const user = UserModel.findOne({email: req.body.email}, function(err, usr) {
+        if (!usr) {
+          const baselink = `${process.env.CLIENT_BASE_URL}/login?moderator=true`
+          const token = jwt.sign({email: req.body.email}, process.env.JWT_ENCRYPTION, {
+            expiresIn: '1h'
+          })
+          const link = `${baselink}&tkn=${token}&email=${req.body.email}`
+          emailSender.sendEmail("new-moderator", req.body.email, link)
+          .then((value) => {
+            console.log('[MODERATOR]: Mail inviata')
+            next()
+          }).catch((error) => {
+            console.log('[MODERATOR]: Mail non inviata')
+            next(error)
+          })
+        } else {
+          next(new ErrorHandler(400, 'Utente già registrato'))
+        }
+      })
     },
+
     /**
      * 
      * @param req 
@@ -57,20 +69,22 @@ export default {
      */
     reset: function (req, res, next) {
       const user  = UserModel.findOne({ email: req.body.email}, function(err, usr) {
-        const baseLink = `${process.env.CLIENT_BASE_URL}/resetpassword?usr=${usr._id}`
-        const token = jwt.sign({id: res._id}, process.env.JWT_ENCRYPTION, {
-          expiresIn: '1h'
-        })
-        const link = [baseLink, token].join('&tkn=')
-        emailSender.sendEmail('reset-password', req.body.email, link)
-        .then((value) => {
-          console.log('[RESET]: Mail inviata')
-          next()
-        })
-        .catch((error) => {
-          console.log('[RESET]: Mail non inviata')
-          next(error)
-        })
+        if (usr) {
+          const baseLink = `${process.env.CLIENT_BASE_URL}/resetpassword?usr=${usr._id}`
+          const token = jwt.sign({id: usr._id}, process.env.JWT_ENCRYPTION, {
+            expiresIn: '1h'
+          })
+          const link = [baseLink, token].join('&tkn=')
+          emailSender.sendEmail('reset-password', req.body.email, link)
+          .then((value) => {
+            console.log('[RESET]: Mail inviata')
+            next()
+          })
+          .catch((error) => {
+            console.log('[RESET]: Mail non inviata')
+            next(error)
+          })
+        }
       })
     }
   }

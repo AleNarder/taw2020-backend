@@ -23,7 +23,7 @@ class EmailSender {
                 case 'new-moderator':
                     subject = 'Sei stato invitato come moderatore';
                     btnText = 'Accedi';
-                    html = new_moderator_1.default(link, moderator, btnText);
+                    html = new_moderator_1.default(link, btnText);
                 case 'confirm-user':
                     subject = 'Benvenuto in taw 2020';
                     btnText = 'Accedi';
