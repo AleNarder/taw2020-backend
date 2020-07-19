@@ -44,7 +44,6 @@ exports.default = {
                         auction.chats[auction.chats.length - 1].messages.push(message2push);
                     }
                     else {
-                        console.log('fff');
                         chat.messages.push(message2push);
                     }
                 }

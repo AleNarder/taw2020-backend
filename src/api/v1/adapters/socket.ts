@@ -1,5 +1,5 @@
 import { Interruptable } from '../../../helpers/Interruptable'
-import { MessageType, MessagePayload } from '../models/message'
+import { MessagePayload } from '../models/message'
 import MessageController from '../controllers/chat'
 import * as io from 'socket.io'
 import * as http from 'http'
@@ -52,11 +52,13 @@ class SocketUtils implements Interruptable {
   private newPrivateMessage(msg: MessagePayload, client: io.Socket) {
     console.log(this.tag + ' new private message')
     MessageController.newMessage('private', msg)
-    let receiver = this.getKey(msg.receiverId)
-    if (receiver) {
-      client.to(this.getKey(msg.receiverId)).emit(this.privateMessageEventTag, {
-        ...msg,
-        timestamp: Date.now()
+    const receivers = [this.getKey(msg.senderId), this.getKey(msg.receiverId)]
+    if (receivers.length > 0) {
+      receivers.forEach((receiver) => {
+        this.io.to(receiver).emit(this.privateMessageEventTag, {
+          ...msg,
+          timestamp: Date.now()
+        })
       })
     }
   }
@@ -72,7 +74,7 @@ class SocketUtils implements Interruptable {
   }
 
   private getKey(val): string {
-    const tuple = [...this.clients].find(([key, value]) => val === value);
+    const tuple = [...this.clients.entries()].find(([key, value]) => val === value)
     return tuple ? tuple[0] : null
   }
 

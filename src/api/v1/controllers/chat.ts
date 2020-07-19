@@ -1,6 +1,7 @@
 import { MessagePayload, messageModel, MessageSchema } from "../models/message";
 import { UserModel } from "../models/user";
 import { ChatModel } from "../models/chat";
+import * as io from 'socket.io'
 
 export default {
   async newMessage (scope: 'public' | 'private', payload: MessagePayload) {
@@ -30,8 +31,8 @@ export default {
           })
           auction.chats.push(chat)
           auction.chats[auction.chats.length - 1].messages.push(message2push)
+          
         } else {
-          console.log('fff')
           chat.messages.push(message2push)
         }
       }
