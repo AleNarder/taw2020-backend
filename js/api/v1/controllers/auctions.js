@@ -23,6 +23,8 @@ exports.default = {
         auction: function (req, res, next) {
             try {
                 const user = req.body.id;
+                req.body.auction.created = Date.now();
+                req.body.auction.winner = null;
                 const auction = new auction_1.AuctionModel(req.body.auction);
                 user_1.UserModel.findByIdAndUpdate(user, { $push: { auctions: auction } }, (err, res) => {
                     if (!err) {
@@ -30,7 +32,7 @@ exports.default = {
                         next();
                     }
                     else
-                        throw new ErrorHandler_1.default(500, 'Auction not created');
+                        throw new ErrorHandler_1.default(500, 'Inserzione non creata');
                 });
             }
             catch (e) {
@@ -48,13 +50,18 @@ exports.default = {
         auctions: function (req, res, next) {
             return __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const auctions = yield user_1.UserModel.find().select('auctions');
-                    if (auctions) {
-                        req.payload = auctions;
+                    const usersAuctions = yield user_1.UserModel.find().select('auctions');
+                    if (usersAuctions) {
+                        for (let userAuctions of usersAuctions) {
+                            for (let userAuction of userAuctions.auctions) {
+                                userAuction.usr = userAuctions._id;
+                            }
+                        }
+                        req.payload = usersAuctions;
                         next();
                     }
                     else
-                        throw new ErrorHandler_1.default(500, 'Cannot get any auction');
+                        next(new ErrorHandler_1.default(500, 'Imposssibile accedere alle inserzioni'));
                 }
                 catch (e) {
                     next(e);
@@ -77,7 +84,24 @@ exports.default = {
                         next();
                     }
                     else
-                        throw new ErrorHandler_1.default(500, 'Cannot get the auction');
+                        next(new ErrorHandler_1.default(500, "Impossibile accedere all'inserzione"));
+                }
+                catch (e) {
+                    next(e);
+                }
+            });
+        },
+        userAuctions: function (req, res, next) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const { userId } = req.params;
+                    const user = yield user_1.UserModel.findById(userId);
+                    if (user) {
+                        req.payload = user.auctions;
+                        next();
+                    }
+                    else
+                        next(new ErrorHandler_1.default(500, "Impossibile accedere all'inserzione"));
                 }
                 catch (e) {
                     next(e);
@@ -108,7 +132,44 @@ exports.default = {
                             next();
                         }
                         else
-                            throw new ErrorHandler_1.default(500, 'Auction not updated');
+                            next(new ErrorHandler_1.default(500, 'Inserzione non aggiornata'));
+                    });
+                }
+                catch (e) {
+                    next(e);
+                }
+            });
+        },
+        auctionOffer: function (req, res, next) {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const { userId, auctionId } = req.params;
+                    const payload = req.body;
+                    const user = yield user_1.UserModel.findById(userId);
+                    const offerent = yield user_1.UserModel.findById(payload.user);
+                    const auction = user.auctions.id(auctionId);
+                    if (auction.offers.length === 0 || auction.currentPrice < payload.amount) {
+                        auction.offers.push({
+                            user: payload.user,
+                            username: offerent.username,
+                            amount: payload.amount,
+                            timestamp: Date.now(),
+                            delta: payload.amount - auction.currentPrice
+                        });
+                        auction.currentPrice = payload.amount;
+                    }
+                    else {
+                        next(new ErrorHandler_1.default(400, 'Offerta troppo bassa'));
+                    }
+                    user.save((err, res) => {
+                        if (!err) {
+                            req.payload = res;
+                            next();
+                        }
+                        else {
+                            console.log(err);
+                            next(new ErrorHandler_1.default(500, 'Offerta non aggiunta'));
+                        }
                     });
                 }
                 catch (e) {
@@ -137,7 +198,7 @@ exports.default = {
                             next();
                         }
                         else
-                            throw new ErrorHandler_1.default(500, 'Auction not deleted');
+                            next(new ErrorHandler_1.default(500, 'Inserzione non eliminata'));
                     });
                 }
                 catch (e) {

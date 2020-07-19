@@ -3,14 +3,15 @@ import * as express from 'express'
 // Controllers
 import user from '../controllers/users'
 import books from '../controllers/books'
-import chats from '../controllers/chats'
 import auctions from '../controllers/auctions'
 import auth from '../controllers/auth'
+import stats from '../controllers/stats'
 import success from '../middlewares/success'
 
 import * as passport from 'passport'
 import { enableLoginAuth } from '../middlewares/auth/login'
 import { enableJWTAuth } from '../middlewares/auth/jwt'
+import { stat } from 'fs'
 
 
 const router = express.Router()
@@ -79,29 +80,33 @@ router
 router
   .route('/auctions')
   .get(auctions.GET.auctions, success)
-  .post(auctions.POST.auction, success)
+  .post(JWTauth, auctions.POST.auction, success)
+
+router
+  .route('/auction/user/:userId')
+  .get(JWTauth, auctions.GET.userAuctions, success)
 
 router
   .route('/auction/:userId/:auctionId')
   .get(auctions.GET.auction, success)
-  .put(auctions.PUT.auctionProperty, success)
-  .delete(auctions.DELETE.auction, success)
+  .put(JWTauth, auctions.PUT.auctionProperty, success)
+  .delete(JWTauth, auctions.DELETE.auction, success)
+
+router
+  .route('/auction/offer/:userId/:auctionId')
+  .put(JWTauth, auctions.PUT.auctionOffer, success)
+
 
  /******************************
- * CHATS SECTION
+ * STATS SECTION
  */
+router
+  .route('/stats/student/:userId')
+  .get(JWTauth, stats.GET.student, success)
 
 router
-  .route('/chats/public/:auctionId')
-  .get(chats.GET.public, success)
-
-router
-  .route('/chats/private/:auctionId/user/:userId')
-  .get(chats.GET.private, success)
-
-router
-  .route('/chats/send/:chatId')
-  .post(chats.POST.message, success)
+  .route('/stats/moderator/')
+  .get(JWTauth, stats.GET.moderator, success)
 
 
 export default router

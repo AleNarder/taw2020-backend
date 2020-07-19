@@ -1,5 +1,12 @@
 import * as mongoose from 'mongoose'
 
+interface BookType extends mongoose.Document {
+  title: string,
+  author: string,
+  course: string,
+  university: string
+}
+
 const bookSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -19,5 +26,5 @@ const bookSchema = new mongoose.Schema({
   }
 })
 
-const BookModel = mongoose.model('Book', bookSchema, 'Books')
-export { bookSchema, BookModel }
+const BookModel = mongoose.model<BookType>('Book', bookSchema, 'Books')
+export { bookSchema, BookModel, BookType }

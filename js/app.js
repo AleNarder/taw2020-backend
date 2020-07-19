@@ -17,8 +17,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const routes_1 = require("./api/v1/routes");
 const routes_2 = require("./api/index/routes");
-const db_1 = require("./api/v1/models/db");
-const socket_1 = require("./chat/socket");
+const db_1 = require("./api/v1/adapters/db");
+const socket_1 = require("./api/v1/adapters/socket");
+const auctionChecher_1 = require("./helpers/auctionChecher");
 const error_1 = require("./api/v1/middlewares/error");
 function check(...args) {
     const reducer = (acc, x) => acc && x;
@@ -32,7 +33,7 @@ function main() {
         const tag = '[SERVER]:';
         const app = express();
         const server = http.createServer(app);
-        const socket = new socket_1.default(server);
+        new socket_1.default(server);
         const conn = yield new db_1.default().connect();
         const port = process.env.PORT || 5000;
         if (check(conn)) {
@@ -46,6 +47,7 @@ function main() {
             server.listen(port, () => {
                 console.log(`${tag} http://localhost:${port}`);
             });
+            auctionChecher_1.default();
         }
         else {
             console.log(`[${tag} not listening`);

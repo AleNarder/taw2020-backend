@@ -1,5 +1,22 @@
 import * as mongoose from 'mongoose'
-import {auctionSchema} from "./auction";
+import { auctionSchema, AuctionType } from "./auction";
+
+interface userType extends mongoose.Document {
+  firstname: string,
+  lastaname: string,
+  username: string,
+  password: string,
+  email: string,
+  address: string,
+  state: string,
+  zipcode: string,
+  country: string,
+  location: string,
+  moderator: boolean,
+  confirmed: boolean,
+  auctions: AuctionType[]
+}
+
 
 const userSchema = new mongoose.Schema({
 
@@ -69,6 +86,6 @@ const userSchema = new mongoose.Schema({
   auctions: [auctionSchema]
 })
 
-const UserModel = mongoose.model('User', userSchema, 'Users')
+const UserModel = mongoose.model<userType>('User', userSchema, 'Users')
 
 export {userSchema, UserModel}

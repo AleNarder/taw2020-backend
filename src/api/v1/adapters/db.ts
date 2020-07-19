@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose'
-import { Interruptable } from './../../../helpers/Interruptable'
+import { Interruptable } from '../../../helpers/Interruptable'
 
 class DbUtils implements Interruptable {
   

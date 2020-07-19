@@ -1,5 +1,5 @@
 import { AuctionModel } from './../models/auction'
-import { UserModel, userSchema } from '../models/user'
+import { UserModel } from '../models/user'
 import ErrorHandler from '../../../helpers/ErrorHandler'
 
 export default {
@@ -13,12 +13,14 @@ export default {
     auction: function (req, res, next) {
       try {
         const user = req.body.id
+        req.body.auction.created = Date.now()
+        req.body.auction.winner = null
         const auction = new AuctionModel(req.body.auction)
         UserModel.findByIdAndUpdate(user, {$push: {auctions: auction}}, (err, res) => {
           if (!err){
             req.payload = res
-            next()
-          } else throw new ErrorHandler(500, 'Auction not created')
+            next()  
+          } else throw new ErrorHandler(500, 'Inserzione non creata')
         })
       } catch (e) {
         next(e)
@@ -34,11 +36,16 @@ export default {
      */
     auctions: async function (req, res, next) {
       try {
-        const auctions = await UserModel.find().select('auctions')
-        if (auctions) {
-          req.payload = auctions
+        const usersAuctions = <any> await UserModel.find().select('auctions')
+        if (usersAuctions) {
+          for (let userAuctions of usersAuctions) {
+            for (let userAuction of userAuctions.auctions) {
+              userAuction.usr = userAuctions._id
+            }
+          }
+          req.payload = usersAuctions
           next()
-        } else throw new ErrorHandler(500, 'Cannot get any auction')
+        } else next(new ErrorHandler(500, 'Imposssibile accedere alle inserzioni'))
       } catch (e) {
         next(e)
       }
@@ -56,7 +63,20 @@ export default {
         if (user) {
           req.payload = user.auctions.id(auctionId)
           next()
-        } else throw new ErrorHandler(500, 'Cannot get the auction')
+        } else next(new ErrorHandler(500, "Impossibile accedere all'inserzione"))
+      } catch (e) {
+        next(e)
+      }
+    },
+
+    userAuctions: async function (req, res, next) {
+      try {
+        const { userId } = req.params
+        const user = <any> await UserModel.findById(userId)
+        if (user) {
+          req.payload = user.auctions
+          next()
+        } else next(new ErrorHandler(500, "Impossibile accedere all'inserzione"))
       } catch (e) {
         next(e)
       }
@@ -71,7 +91,7 @@ export default {
      */
     auctionProperty: async function (req, res, next) {
       try {
-        const {userId, auctionId} = req.params
+        const { userId, auctionId } = req.params
         const { payload } = req.body
         const user = <any> await UserModel.findById(userId)
         const auction = user.auctions.id(auctionId)
@@ -82,7 +102,40 @@ export default {
           if (!err) {
             req.payload = res
             next()
-          } else throw new ErrorHandler(500, 'Auction not updated')
+          } else next(new ErrorHandler(500, 'Inserzione non aggiornata'))
+        })
+      } catch (e) {
+        next(e)
+      }
+    },
+
+    auctionOffer: async function (req, res, next) {
+      try {
+        const { userId, auctionId } = req.params
+        const payload = req.body
+        const user = <any> await UserModel.findById(userId)
+        const offerent = await UserModel.findById(payload.user)
+        const auction = user.auctions.id(auctionId)
+        if (auction.offers.length === 0 || auction.currentPrice < payload.amount) {
+          auction.offers.push({
+            user: payload.user,
+            username: offerent.username,
+            amount: payload.amount,
+            timestamp: Date.now(),
+            delta: payload.amount - auction.currentPrice
+          })
+          auction.currentPrice = payload.amount
+        } else {
+          next(new ErrorHandler(400, 'Offerta troppo bassa'))
+        }
+        user.save((err, res)=> {
+          if (!err) {
+            req.payload = res
+            next()
+          } else {
+            console.log(err)
+            next(new ErrorHandler(500, 'Offerta non aggiunta'))
+          }
         })
       } catch (e) {
         next(e)
@@ -106,7 +159,7 @@ export default {
           if (!err) {
             req.payload = res
             next()
-          } else throw new ErrorHandler(500, 'Auction not deleted')
+          } else next(new ErrorHandler(500, 'Inserzione non eliminata'))
         })
       } catch (e) {
         next(e)

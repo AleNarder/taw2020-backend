@@ -84,7 +84,7 @@ export default {
                   next()
                 })
                 .catch((error) => {
-                  console.log('[NEW USER]: email inviata')
+                  console.log('[NEW USER]: email non inviata')
                   next(error) 
                 }) 
               } else {

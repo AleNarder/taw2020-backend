@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 const book_1 = require("./book");
-const chat_1 = require("../../../chat/models/chat");
+const chat_1 = require("./chat");
+const offer_1 = require("./offer");
 const auctionSchema = new mongoose.Schema({
     created: {
-        type: Date,
+        type: Number,
         required: true
     },
     threshold: {
@@ -23,12 +24,18 @@ const auctionSchema = new mongoose.Schema({
         required: true
     },
     book: [book_1.bookSchema],
-    chat: {
+    offers: [offer_1.OfferSchema],
+    winner: {
+        type: mongoose.Types.ObjectId,
         required: false,
-        type: chat_1.chatSchema
+        default: null,
+    },
+    chats: {
+        required: true,
+        type: [chat_1.ChatSchema]
     }
 });
 exports.auctionSchema = auctionSchema;
-const AuctionModel = mongoose.model('Auction', auctionSchema, 'Autction');
+const AuctionModel = mongoose.model('Auction', auctionSchema);
 exports.AuctionModel = AuctionModel;
 //# sourceMappingURL=auction.js.map

@@ -8,9 +8,10 @@ import * as cors from 'cors'
 
 import apiRouter from './api/v1/routes'
 import idxRouter from './api/index/routes'
-import DbUtils from './api/v1/models/db'
-import SocketUtils from './chat/socket'
+import DbUtils from './api/v1/adapters/db'
+import SocketUtils from './api/v1/adapters/socket'
 import { Interruptable } from './helpers/Interruptable'
+import auctionChecker from './helpers/auctionChecher'
 import error from './api/v1/middlewares/error'
 
 
@@ -28,7 +29,7 @@ async function main () {
   const tag = '[SERVER]:'
   const app = express()
   const server = http.createServer(app)
-  const socket = new SocketUtils(server)
+  new SocketUtils(server)
   const conn = await new DbUtils().connect()
   const port = process.env.PORT || 5000
   if (check(conn)) {
@@ -42,6 +43,7 @@ async function main () {
     server.listen(port, () => {
       console.log(`${tag} http://localhost:${port}`)
     })
+    auctionChecker()
   } else {
     console.log(`[${tag} not listening`)
   }

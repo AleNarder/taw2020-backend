@@ -4,9 +4,9 @@ const express = require("express");
 // Controllers
 const users_1 = require("../controllers/users");
 const books_1 = require("../controllers/books");
-const chats_1 = require("../controllers/chats");
 const auctions_1 = require("../controllers/auctions");
 const auth_1 = require("../controllers/auth");
+const stats_1 = require("../controllers/stats");
 const success_1 = require("../middlewares/success");
 const passport = require("passport");
 const login_1 = require("../middlewares/auth/login");
@@ -63,23 +63,26 @@ router
 router
     .route('/auctions')
     .get(auctions_1.default.GET.auctions, success_1.default)
-    .post(auctions_1.default.POST.auction, success_1.default);
+    .post(JWTauth, auctions_1.default.POST.auction, success_1.default);
+router
+    .route('/auction/user/:userId')
+    .get(JWTauth, auctions_1.default.GET.userAuctions, success_1.default);
 router
     .route('/auction/:userId/:auctionId')
     .get(auctions_1.default.GET.auction, success_1.default)
-    .put(auctions_1.default.PUT.auctionProperty, success_1.default)
-    .delete(auctions_1.default.DELETE.auction, success_1.default);
+    .put(JWTauth, auctions_1.default.PUT.auctionProperty, success_1.default)
+    .delete(JWTauth, auctions_1.default.DELETE.auction, success_1.default);
+router
+    .route('/auction/offer/:userId/:auctionId')
+    .put(JWTauth, auctions_1.default.PUT.auctionOffer, success_1.default);
 /******************************
-* CHATS SECTION
+* STATS SECTION
 */
 router
-    .route('/chats/public/:auctionId')
-    .get(chats_1.default.GET.public, success_1.default);
+    .route('/stats/student/:userId')
+    .get(JWTauth, stats_1.default.GET.student, success_1.default);
 router
-    .route('/chats/private/:auctionId/user/:userId')
-    .get(chats_1.default.GET.private, success_1.default);
-router
-    .route('/chats/send/:chatId')
-    .post(chats_1.default.POST.message, success_1.default);
+    .route('/stats/moderator/')
+    .get(JWTauth, stats_1.default.GET.moderator, success_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map
