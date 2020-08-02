@@ -38,21 +38,26 @@ export default {
         let auctionsWithUser, auctionsWithUserWinner 
         auctionsWithUser = []
         auctionsWithUserWinner = []
-        const userAuctions = (<any> await UserModel.findById(userId)).auctions
-        const users  = <any> await UserModel.find()
+        const userAuctions = (<any> await UserModel.findById(userId).select('auctions.book auctions.created auctions._id')).auctions
+        const users  = <any> await UserModel.find().select('auctions.offers auctions.book auctions.created _id auctions._id auctions.winner')
         for (let user of users ) {
-          console.log(user.auctions)
           for (let auction of user.auctions) {
             if (auction.offers.find(offer => offer.user == userId)) {
-              auctionsWithUser.push(auction)
+              auctionsWithUser.push({
+                _id: auction._id,
+                book: auction.book,
+                created: auction.created
+              })
               if (auction.winner == userId) {
-                auctionsWithUserWinner.push(auction)
+                auctionsWithUserWinner.push({
+                  _id: auction._id
+                })
               }
             }
           }
         }
         req.payload = {
-          userAuctions, auctionsWithUserWinner, auctionsWithUser
+          userAuctions, auctionsWithUser,auctionsWithUserWinner
         }
         next()
       } catch (e) {

@@ -22,9 +22,14 @@ exports.default = {
          */
         auction: function (req, res, next) {
             try {
-                const user = req.body.id;
+                const user = req.params.userId;
                 req.body.auction.created = Date.now();
+                req.body.auction.isActive = true;
                 req.body.auction.winner = null;
+                req.body.auction.chats = [{
+                        'scope': 'public'
+                    }];
+                console.log(req.body.auction);
                 const auction = new auction_1.AuctionModel(req.body.auction);
                 user_1.UserModel.findByIdAndUpdate(user, { $push: { auctions: auction } }, (err, res) => {
                     if (!err) {

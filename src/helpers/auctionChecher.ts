@@ -6,7 +6,7 @@ export default async function auctionChecker () {
   for (let user of users) {
     let update = false
     for (let auction of user.auctions) {
-      if (auction.isActive && (Date.now() - auction.created > 1000 )) {
+      if (auction.isActive && (Date.now() - auction.created > oneWeek )) {
         update = true
         auction.isActive = false
         if (auction.currentPrice > auction.threshold) {

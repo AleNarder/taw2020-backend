@@ -13,7 +13,7 @@ const message_1 = require("../models/message");
 const user_1 = require("../models/user");
 const chat_1 = require("../models/chat");
 exports.default = {
-    newMessage(scope, payload) {
+    newMessage(scope, payload, timestamp) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const usr = yield user_1.UserModel.findOne({ 'auctions._id': payload.auctionId });
@@ -24,7 +24,7 @@ exports.default = {
                     senderId,
                     senderUs,
                     message,
-                    timestamp: Date.now()
+                    timestamp
                 });
                 if (scope === 'public') {
                     chat = auction.chats.find(chat => chat.scope === scope);

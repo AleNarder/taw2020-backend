@@ -62,11 +62,11 @@ router
  */
 router
     .route('/auctions')
-    .get(auctions_1.default.GET.auctions, success_1.default)
-    .post(JWTauth, auctions_1.default.POST.auction, success_1.default);
+    .get(auctions_1.default.GET.auctions, success_1.default);
 router
     .route('/auction/user/:userId')
-    .get(JWTauth, auctions_1.default.GET.userAuctions, success_1.default);
+    .get(JWTauth, auctions_1.default.GET.userAuctions, success_1.default)
+    .post(JWTauth, auctions_1.default.POST.auction, success_1.default);
 router
     .route('/auction/:userId/:auctionId')
     .get(auctions_1.default.GET.auction, success_1.default)

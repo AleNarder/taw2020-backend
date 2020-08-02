@@ -80,11 +80,11 @@ router
 router
   .route('/auctions')
   .get(auctions.GET.auctions, success)
-  .post(JWTauth, auctions.POST.auction, success)
-
+  
 router
   .route('/auction/user/:userId')
   .get(JWTauth, auctions.GET.userAuctions, success)
+  .post(JWTauth, auctions.POST.auction, success)
 
 router
   .route('/auction/:userId/:auctionId')

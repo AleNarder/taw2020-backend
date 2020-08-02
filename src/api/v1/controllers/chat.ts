@@ -4,7 +4,7 @@ import { ChatModel } from "../models/chat";
 import * as io from 'socket.io'
 
 export default {
-  async newMessage (scope: 'public' | 'private', payload: MessagePayload) {
+  async newMessage (scope: 'public' | 'private', payload: MessagePayload, timestamp) {
     try {
       const usr =  await UserModel.findOne({'auctions._id': payload.auctionId})
       const auction = usr.auctions.find((auction) => auction._id == payload.auctionId)
@@ -14,7 +14,7 @@ export default {
         senderId, 
         senderUs,
         message,
-        timestamp: Date.now()
+        timestamp
       })
       if (scope === 'public') {
         chat = auction.chats.find(chat => chat.scope === scope)
@@ -31,7 +31,6 @@ export default {
           })
           auction.chats.push(chat)
           auction.chats[auction.chats.length - 1].messages.push(message2push)
-          
         } else {
           chat.messages.push(message2push)
         }

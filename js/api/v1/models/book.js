@@ -20,6 +20,6 @@ const bookSchema = new mongoose.Schema({
     }
 });
 exports.bookSchema = bookSchema;
-const BookModel = mongoose.model('Book', bookSchema, 'Books');
+const BookModel = mongoose.model('Book', bookSchema);
 exports.BookModel = BookModel;
 //# sourceMappingURL=book.js.map

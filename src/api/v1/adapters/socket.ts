@@ -1,8 +1,10 @@
 import { Interruptable } from '../../../helpers/Interruptable'
 import { MessagePayload } from '../models/message'
 import MessageController from '../controllers/chat'
+import AuctionOffersController from '../controllers/auctionOffers'
 import * as io from 'socket.io'
 import * as http from 'http'
+import { OfferPayload } from '../models/offer'
 
 class SocketUtils implements Interruptable {
   
@@ -12,6 +14,7 @@ class SocketUtils implements Interruptable {
   private privateMessageEventTag = 'new-private-message'
   private publicMessageEventTag = 'new-public-message'
   private newEntryEventTag = 'new-entry'
+  private newAuctionOfferTag = 'new-offer'
   private clients = new Map<string, string>()
 
   constructor (server: http.Server) {
@@ -37,6 +40,9 @@ class SocketUtils implements Interruptable {
     client.on(this.publicMessageEventTag, (msg) => {
       this.newPublicMessage(msg, client)
     })
+    client.on(this.newAuctionOfferTag, (msg) => {
+      this.newAuctionOffer(msg, client)
+    })
   }
 
   private disconnect (client: io.Socket) {
@@ -49,9 +55,24 @@ class SocketUtils implements Interruptable {
     console.log(this.clients)
   }
 
+  private newAuctionOffer (msg: OfferPayload, client: io.Socket) {
+    try {
+      console.log(this.tag + ' new offer')
+      const now = Date.now()
+      AuctionOffersController.auctionOffer(msg, now)
+      this.io.sockets.emit(this.newAuctionOfferTag, {
+        ...msg,
+        timestamp: now
+      })
+    } catch (e) {
+
+    }
+  }
+
   private newPrivateMessage(msg: MessagePayload, client: io.Socket) {
     console.log(this.tag + ' new private message')
-    MessageController.newMessage('private', msg)
+    const now = Date.now()
+    MessageController.newMessage('private', msg, now)
     const receivers = [this.getKey(msg.senderId), this.getKey(msg.receiverId)]
     if (receivers.length > 0) {
       receivers.forEach((receiver) => {
@@ -65,8 +86,8 @@ class SocketUtils implements Interruptable {
 
   private async newPublicMessage (msg: MessagePayload, client: io.Socket) {
     console.log(this.tag + ' new public message')
-    console.log('message', msg)
-    MessageController.newMessage('public', msg)
+    const now = Date.now()
+    MessageController.newMessage('public', msg, now)
     this.io.sockets.emit(this.publicMessageEventTag, {
       ...msg,
       timestamp: Date.now()

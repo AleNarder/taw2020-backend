@@ -1,5 +1,14 @@
 import * as mongoose from 'mongoose'
 
+interface OfferPayload {
+  offerentId: string,
+  offerentUs: string,
+  receiverId: string,
+  auctionId: string,
+  amount: number,
+  delta: number
+}
+
 interface OfferType extends mongoose.Document {
   user: string,
   username: string,
@@ -33,4 +42,4 @@ const OfferSchema = new mongoose.Schema({
 
 const offerModel = mongoose.model<OfferType>('Offer', OfferSchema)
 
-export { offerModel, OfferSchema, OfferType }
+export { offerModel, OfferSchema, OfferType, OfferPayload }
