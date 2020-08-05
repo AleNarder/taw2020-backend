@@ -88,4 +88,4 @@ const userSchema = new mongoose.Schema({
 
 const UserModel = mongoose.model<userType>('User', userSchema, 'Users')
 
-export {userSchema, UserModel}
+export {userSchema, UserModel, userType}

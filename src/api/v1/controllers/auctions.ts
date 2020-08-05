@@ -1,5 +1,5 @@
 import { AuctionModel } from './../models/auction'
-import { UserModel } from '../models/user'
+import { UserModel, userType } from '../models/user'
 import ErrorHandler from '../../../helpers/ErrorHandler'
 
 export default {
@@ -97,12 +97,11 @@ export default {
     auctionProperty: async function (req, res, next) {
       try {
         const { userId, auctionId } = req.params
-        const { payload } = req.body
-        const user = <any> await UserModel.findById(userId)
-        const auction = user.auctions.id(auctionId)
-        for (let key in payload) {
-          auction[key] = payload[key]
-        }
+        const payload = req.body
+        const user = <userType> await UserModel.findById(userId)
+        const auctionIdx = user.auctions.findIndex(auction => auction._id == auctionId)
+        console.log(user.auctions[auctionIdx])
+        user.auctions[auctionIdx] = {...user.auctions[auctionIdx], ...payload}
         user.save((err, res)=> {
           if (!err) {
             req.payload = res

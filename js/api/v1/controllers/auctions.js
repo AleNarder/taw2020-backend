@@ -125,12 +125,11 @@ exports.default = {
             return __awaiter(this, void 0, void 0, function* () {
                 try {
                     const { userId, auctionId } = req.params;
-                    const { payload } = req.body;
+                    const payload = req.body;
                     const user = yield user_1.UserModel.findById(userId);
-                    const auction = user.auctions.id(auctionId);
-                    for (let key in payload) {
-                        auction[key] = payload[key];
-                    }
+                    const auctionIdx = user.auctions.findIndex(auction => auction._id == auctionId);
+                    console.log(user.auctions[auctionIdx]);
+                    user.auctions[auctionIdx] = Object.assign(Object.assign({}, user.auctions[auctionIdx]), payload);
                     user.save((err, res) => {
                         if (!err) {
                             req.payload = res;
