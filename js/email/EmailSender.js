@@ -4,6 +4,9 @@ const nodemailer = require("nodemailer");
 const reset_password_1 = require("./controllers/reset-password");
 const confirm_user_1 = require("./controllers/confirm-user");
 const new_moderator_1 = require("./controllers/new-moderator");
+const auction_success_1 = require("./controllers/auction-success");
+const auction_fail_1 = require("./controllers/auction-fail");
+const auction_new_offer_1 = require("./controllers/auction-new-offer");
 class EmailSender {
     constructor() {
         this.from = process.env.EMAIL_US,
@@ -16,9 +19,10 @@ class EmailSender {
             }
         });
     }
-    sendEmail(type, to, link, moderator) {
+    sendEmail(type, to, link, moderator, auctionName) {
         return new Promise((resolve, reject) => {
             let subject, html, btnText = null;
+            console.log(type);
             switch (type) {
                 case 'new-moderator':
                     subject = 'Sei stato invitato come moderatore';
@@ -29,6 +33,25 @@ class EmailSender {
                     btnText = 'Accedi';
                     html = confirm_user_1.default(link, btnText);
                     break;
+                case 'auction-success-seller':
+                    subject = `Asta ${auctionName.toUpperCase()} conclusa`;
+                    btnText = 'Visualizza asta';
+                    html = auction_success_1.default(link, btnText, true);
+                    break;
+                case 'auction-success-buyer':
+                    subject = `Hai vinto l\'asta ${auctionName.toUpperCase()}!`;
+                    btnText = 'Visualizza asta';
+                    html = auction_success_1.default(link, btnText, false);
+                    break;
+                case 'auction-fail':
+                    subject = `Asta ${auctionName.toUpperCase()} invenduta`;
+                    btnText = 'Visualizza asta';
+                    html = auction_fail_1.default(link, btnText);
+                    break;
+                case 'auction-new-offer':
+                    subject = `Nuova offerta in ${auctionName.toUpperCase()}`;
+                    btnText = 'Rilancia';
+                    html = auction_new_offer_1.default(link, btnText);
                 default:
                     subject = 'Reset password';
                     btnText = 'Reimposta';

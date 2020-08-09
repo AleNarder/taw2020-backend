@@ -10,7 +10,6 @@ import apiRouter from './api/v1/routes'
 import idxRouter from './api/index/routes'
 import DbUtils from './api/v1/adapters/db'
 import SocketUtils from './api/v1/adapters/socket'
-import { Interruptable } from './helpers/Interruptable'
 import auctionChecker from './helpers/auctionChecher'
 import error from './api/v1/middlewares/error'
 
@@ -19,11 +18,6 @@ function check (...args: any) {
   const reducer = (acc, x) => acc && x
   return args.reduce(reducer)
 }
-
-function interrupt (...arg: Interruptable[]) {
-  //TODO
-}
-
 
 async function main () {
   const tag = '[SERVER]:'

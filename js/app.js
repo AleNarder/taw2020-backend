@@ -25,9 +25,6 @@ function check(...args) {
     const reducer = (acc, x) => acc && x;
     return args.reduce(reducer);
 }
-function interrupt(...arg) {
-    //TODO
-}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const tag = '[SERVER]:';

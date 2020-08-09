@@ -17,8 +17,6 @@ function template(title, text, link, btnText) {
     >
       <div
         style="
-        max-width: 60%; 
-        max-height: 40%;
         background-color: white; 
         margin: auto; text-align: center;
         border-radius: 5px;
@@ -50,8 +48,6 @@ function template(title, text, link, btnText) {
                 style="
                 text-decoration: none;
                 color: white;
-                padding-left: 85px;
-                padding-right: 85px;
               "
                 >${btnText}</a
               >

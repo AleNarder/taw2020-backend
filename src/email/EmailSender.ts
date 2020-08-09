@@ -3,7 +3,18 @@ import * as nodemailer from 'nodemailer'
 import resetPassword from './controllers/reset-password'
 import confirmUser from './controllers/confirm-user'
 import newModerator from './controllers/new-moderator'
-import { resolve } from 'dns'
+import auctionSuccess from './controllers/auction-success'
+import auctionFail from './controllers/auction-fail'
+import auctionNewOffer from './controllers/auction-new-offer'
+
+type emailType = 
+  'reset-password'
+  | 'confirm-user'  
+  | 'new-moderator' 
+  | 'auction-success-buyer' 
+  | 'auction-success-seller'
+  | 'auction-fail'
+  | 'auction-new-offer'
 
 class EmailSender {
   
@@ -26,9 +37,10 @@ class EmailSender {
     })
   }
 
-  sendEmail (type: 'reset-password' | 'confirm-user' | 'new-moderator',  to: string, link: string, moderator?: string): Promise<string> {
+  sendEmail (type: emailType,  to: string, link: string, moderator?: string, auctionName ?: string ): Promise<string> {
     return new Promise((resolve, reject) => {
       let subject, html, btnText = null
+      console.log(type)
       switch (type) {
         case 'new-moderator':
           subject = 'Sei stato invitato come moderatore'
@@ -39,12 +51,32 @@ class EmailSender {
           btnText = 'Accedi'
           html = confirmUser(link, btnText)
           break;
+        case 'auction-success-seller':
+          subject =  `Asta ${auctionName.toUpperCase()} conclusa`
+          btnText = 'Visualizza asta'
+          html = auctionSuccess(link, btnText, true)
+          break;
+        case 'auction-success-buyer': 
+          subject = `Hai vinto l\'asta ${auctionName.toUpperCase()}!`
+          btnText = 'Visualizza asta'
+          html = auctionSuccess(link, btnText, false)
+          break;
+        case 'auction-fail':
+          subject =  `Asta ${auctionName.toUpperCase()} invenduta`
+          btnText = 'Visualizza asta'
+          html = auctionFail(link, btnText)
+          break;
+        case 'auction-new-offer':
+          subject = `Nuova offerta in ${auctionName.toUpperCase()}`
+          btnText = 'Rilancia'
+          html = auctionNewOffer(link, btnText)
         default:
           subject = 'Reset password'
           btnText = 'Reimposta'
           html = resetPassword(link, btnText)
           break;
       }
+      
       const options = {
         from: this.from,
         to,
