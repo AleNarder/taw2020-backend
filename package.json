@@ -4,9 +4,10 @@
   "description": "",
   "main": "js/server.js",
   "scripts": {
+    "postinstall": "npm run build",
     "dev": "nodemon js/app.js",
     "build": "tsc",
-    "start": "npm run build && node js/app.js"
+    "start": "node js/app.js"
   },
   "author": "Alessio Narder",
   "license": "ISC",

@@ -15,6 +15,7 @@ class SocketUtils implements Interruptable {
   private publicMessageEventTag = 'new-public-message'
   private newEntryEventTag = 'new-entry'
   private newAuctionOfferTag = 'new-offer'
+  private newAuctionTag = 'new-auction'
   private clients = new Map<string, string>()
 
   constructor (server: http.Server) {
@@ -43,6 +44,9 @@ class SocketUtils implements Interruptable {
     client.on(this.newAuctionOfferTag, (msg) => {
       this.newAuctionOffer(msg, client)
     })
+    client.on(this.newAuctionTag, () => {
+      this.newAuction()
+    })
   }
 
   private disconnect (client: io.Socket) {
@@ -53,6 +57,10 @@ class SocketUtils implements Interruptable {
   private addClient (clientMongoID: string, client: io.Socket) {
     this.clients.set(client.id, clientMongoID)
     console.log(this.clients)
+  }
+
+  private newAuction() {
+    this.io.sockets.emit(this.newAuctionOfferTag, {})
   }
 
   private newAuctionOffer (msg: OfferPayload, client: io.Socket) {
