@@ -75,10 +75,6 @@ exports.default = {
         user: function (req, res, next) {
             return __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const options = {
-                        provider: 'locationiq',
-                        apiKey: process.env.GEOCODER_API_KEY
-                    };
                     user_1.UserModel.findOne({ email: req.body.email }, function (err, usr) {
                         return __awaiter(this, void 0, void 0, function* () {
                             if (!usr) {

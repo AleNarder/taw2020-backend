@@ -1,5 +1,4 @@
 import { UserModel } from './../models/user'
-import * as Geocoder from 'node-geocoder'
 import ErrorHandler from '../../../helpers/ErrorHandler'
 import EmailSender from '../../../email/EmailSender'
 import * as jwt from 'jsonwebtoken'
@@ -60,10 +59,6 @@ export default {
      */
     user: async function (req, res, next) {
       try {
-        const options: Geocoder.GenericOptions = {
-          provider: 'locationiq',
-          apiKey: process.env.GEOCODER_API_KEY
-        }
         UserModel.findOne({email: req.body.email}, async function(err, usr) {
           if (!usr) {
             const user = new UserModel(req.body)
