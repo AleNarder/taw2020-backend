@@ -4,7 +4,7 @@ import { ChatSchema, ChatType } from './chat'
 import { OfferSchema } from './offer'
 
 interface AuctionType extends mongoose.Document {
-  created: Number,
+  expires: Number,
   threshold: Number,
   currentPrice: Number,
   isActive: Boolean,
@@ -13,7 +13,7 @@ interface AuctionType extends mongoose.Document {
 }
 
 const auctionSchema = new mongoose.Schema({
-  created: {
+  expires: {
     type: Number,
     required: true
   },

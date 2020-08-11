@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("./../models/user");
-const Geocoder = require("node-geocoder");
 const ErrorHandler_1 = require("../../../helpers/ErrorHandler");
 const EmailSender_1 = require("../../../email/EmailSender");
 const jwt = require("jsonwebtoken");
@@ -83,10 +82,6 @@ exports.default = {
                     user_1.UserModel.findOne({ email: req.body.email }, function (err, usr) {
                         return __awaiter(this, void 0, void 0, function* () {
                             if (!usr) {
-                                const geocoder = Geocoder(options);
-                                const { address, zipcode, state, country } = req.body;
-                                const { latitude, longitude } = (yield geocoder.geocode(`${address}, ${zipcode}, ${state}, ${country}`))[0];
-                                req.body.location = { type: 'Point', 'coordinates': [longitude, latitude] };
                                 const user = new user_1.UserModel(req.body);
                                 user.save(null, (err, res) => {
                                     if (!err) {

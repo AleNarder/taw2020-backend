@@ -13,7 +13,6 @@ export default {
     auction: function (req, res, next) {
       try {
         const user = req.params.userId
-        req.body.auction.created = Date.now()
         req.body.auction.isActive = true
         req.body.auction.winner = null
         req.body.auction.chats = [{
@@ -41,11 +40,11 @@ export default {
      */
     auctions: async function (req, res, next) {
       try {
-        const usersAuctions = <any> await UserModel.find().select('auctions')
+        const usersAuctions = <userType[]> await UserModel.find().select('auctions location')
         if (usersAuctions) {
           for (let userAuctions of usersAuctions) {
             for (let userAuction of userAuctions.auctions) {
-              userAuction.usr = userAuctions._id
+              userAuction['usr'] = userAuctions._id
             }
           }
           req.payload = usersAuctions

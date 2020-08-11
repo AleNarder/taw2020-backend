@@ -23,7 +23,6 @@ exports.default = {
         auction: function (req, res, next) {
             try {
                 const user = req.params.userId;
-                req.body.auction.created = Date.now();
                 req.body.auction.isActive = true;
                 req.body.auction.winner = null;
                 req.body.auction.chats = [{
@@ -55,11 +54,11 @@ exports.default = {
         auctions: function (req, res, next) {
             return __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const usersAuctions = yield user_1.UserModel.find().select('auctions');
+                    const usersAuctions = yield user_1.UserModel.find().select('auctions location');
                     if (usersAuctions) {
                         for (let userAuctions of usersAuctions) {
                             for (let userAuction of userAuctions.auctions) {
-                                userAuction.usr = userAuctions._id;
+                                userAuction['usr'] = userAuctions._id;
                             }
                         }
                         req.payload = usersAuctions;

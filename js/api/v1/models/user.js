@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 const auction_1 = require("./auction");
+const location_1 = require("./location");
 const userSchema = new mongoose.Schema({
     firstname: {
         type: String,
@@ -24,33 +25,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    address: {
-        type: String,
-        required: true
-    },
-    state: {
-        type: String,
-        required: true
-    },
-    zipcode: {
-        type: String,
-        required: true
-    },
-    country: {
-        type: String,
-        required: true
-    },
-    location: {
-        type: {
-            type: String,
-            enum: ['Point'],
-            required: true
-        },
-        coordinates: {
-            type: [Number],
-            required: true
-        }
-    },
     moderator: {
         type: Boolean,
         required: true
@@ -60,6 +34,7 @@ const userSchema = new mongoose.Schema({
         required: false,
         default: false
     },
+    location: [location_1.locationSchema],
     auctions: [auction_1.auctionSchema]
 });
 exports.userSchema = userSchema;

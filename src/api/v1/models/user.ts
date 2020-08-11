@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose'
 import { auctionSchema, AuctionType } from "./auction";
+import { LocationType, locationSchema } from './location';
 
 interface userType extends mongoose.Document {
   firstname: string,
@@ -7,11 +8,7 @@ interface userType extends mongoose.Document {
   username: string,
   password: string,
   email: string,
-  address: string,
-  state: string,
-  zipcode: string,
-  country: string,
-  location: string,
+  location: LocationType
   moderator: boolean,
   confirmed: boolean,
   auctions: AuctionType[]
@@ -44,34 +41,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  address: {
-    type: String,
-    required: true
-  },
-  state: {
-    type: String,
-    required: true
-  },
-  zipcode: {
-    type: String,
-    required: true
-  },
-  country: {
-    type: String,
-    required: true
-  },
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      required: true 
-    } ,
-    coordinates: {
-      type: [Number],
-      required: true
-    }
-  },
-
   moderator: {
     type: Boolean,
     required: true
@@ -82,7 +51,7 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: false
   },
-
+  location: [locationSchema],
   auctions: [auctionSchema]
 })
 

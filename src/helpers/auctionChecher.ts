@@ -3,13 +3,12 @@ import emailSender from '../email/EmailSender'
 
 export default async function auctionChecker () {
   const users = <any> await UserModel.find().select('auctions email')
-  const oneWeek = 1000 * 60 * 60 * 24 * 7
   const checkInterval = 1000 * 30
   for (let user of users) {
     for (let auction of user.auctions) {
       let update = false
       let winner = null
-      if (auction.isActive && (Date.now() - auction.created > oneWeek )) {
+      if (auction.isActive && (Date.now() - auction.expires > 0 )) {
         update = true
         auction.isActive = false
         if (auction.currentPrice > auction.threshold) {

@@ -5,7 +5,7 @@ const book_1 = require("./book");
 const chat_1 = require("./chat");
 const offer_1 = require("./offer");
 const auctionSchema = new mongoose.Schema({
-    created: {
+    expires: {
         type: Number,
         required: true
     },

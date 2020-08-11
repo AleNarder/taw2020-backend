@@ -66,10 +66,6 @@ export default {
         }
         UserModel.findOne({email: req.body.email}, async function(err, usr) {
           if (!usr) {
-            const geocoder = Geocoder(options)
-            const {address, zipcode, state, country} = req.body
-            const {latitude, longitude} = (await geocoder.geocode(`${address}, ${zipcode}, ${state}, ${country}`))[0]
-            req.body.location = {type: 'Point', 'coordinates': [longitude, latitude]}
             const user = new UserModel(req.body)
             user.save(null, (err, res) => {
               if (!err) {
