@@ -3,11 +3,38 @@ HOST: https://polls.apiblueprint.org/
 
 # taw2020
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Documentazione degli endpoint presenti nel backend dell'applicazione
 
-## Questions Collection [/questions]
+## UTENTI  [/users]
 
-### List All Questions [GET]
+### Lista tutti gli utenti [GET]
+
++ Response 200 (application/json)
+
+        [
+            {
+                "question": "Favourite programming language?",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "votes": 2048
+                    }, {
+                        "choice": "Python",
+                        "votes": 1024
+                    }, {
+                        "choice": "Objective-C",
+                        "votes": 512
+                    }, {
+                        "choice": "Ruby",
+                        "votes": 256
+                    }
+                ]
+            }
+        ]
+## UTENTE  [/user/:userId]
+
+### Ottieni i dati di un utente[GET]
 
 + Response 200 (application/json)
 
@@ -33,48 +60,79 @@ Polls is a simple API allowing consumers to view polls and vote in them.
             }
         ]
 
-### Create a New Question [POST]
+### Elimina un utente [DELETE]
++ Response 200 (application/json)
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
-
-    + Body
-
+        [
             {
                 "question": "Favourite programming language?",
                 "published_at": "2015-08-05T08:40:51.620Z",
                 "choices": [
                     {
                         "choice": "Swift",
-                        "votes": 0
+                        "votes": 2048
                     }, {
                         "choice": "Python",
-                        "votes": 0
+                        "votes": 1024
                     }, {
                         "choice": "Objective-C",
-                        "votes": 0
+                        "votes": 512
                     }, {
                         "choice": "Ruby",
-                        "votes": 0
+                        "votes": 256
                     }
                 ]
             }
+        ]    
+
+### Modifica i dati di un utente [PUT]
++ Response 200 (application/json)
+
+        [
+            {
+                "question": "Favourite programming language?",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "votes": 2048
+                    }, {
+                        "choice": "Python",
+                        "votes": 1024
+                    }, {
+                        "choice": "Objective-C",
+                        "votes": 512
+                    }, {
+                        "choice": "Ruby",
+                        "votes": 256
+                    }
+                ]
+            }
+        ]    
+
+### Nuovo utente [POST]
++ Response 200 (application/json)
+
+        [
+            {
+                "question": "Favourite programming language?",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "votes": 2048
+                    }, {
+                        "choice": "Python",
+                        "votes": 1024
+                    }, {
+                        "choice": "Objective-C",
+                        "votes": 512
+                    }, {
+                        "choice": "Ruby",
+                        "votes": 256
+                    }
+                ]
+            }
+        ]    
+        
+## Autenticazione [/auth]
