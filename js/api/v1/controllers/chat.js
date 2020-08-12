@@ -32,8 +32,7 @@ exports.default = {
                 }
                 else {
                     let partner = (payload.senderId == usr._id) ? payload.receiverId : payload.senderId;
-                    chat = auction.chats.filter(chat => chat.scope === scope)
-                        .find(chat => chat.partnerId == partner);
+                    chat = auction.chats.filter(chat => chat.scope === scope).find(chat => chat.partnerId == partner);
                     if (!chat) {
                         chat = yield chat_1.ChatModel.create({
                             scope: 'private',

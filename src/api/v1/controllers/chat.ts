@@ -1,7 +1,6 @@
-import { MessagePayload, messageModel, MessageSchema } from "../models/message";
+import { MessagePayload, messageModel } from "../models/message";
 import { UserModel } from "../models/user";
 import { ChatModel } from "../models/chat";
-import * as io from 'socket.io'
 
 export default {
   async newMessage (scope: 'public' | 'private', payload: MessagePayload, timestamp) {
@@ -21,8 +20,7 @@ export default {
         chat.messages.push(message2push)
       } else {
         let partner = (payload.senderId == usr._id) ? payload.receiverId : payload.senderId
-        chat = auction.chats.filter(chat => chat.scope === scope)
-        .find(chat => chat.partnerId == partner)
+        chat = auction.chats.filter(chat => chat.scope === scope).find(chat => chat.partnerId == partner)
         if (!chat) {
           chat = await ChatModel.create({
             scope: 'private',

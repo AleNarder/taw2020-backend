@@ -60,7 +60,7 @@ class SocketUtils implements Interruptable {
   }
 
   private newAuction() {
-    this.io.sockets.emit(this.newAuctionOfferTag, {})
+    this.io.emit(this.newAuctionTag, {})
   }
 
   private newAuctionOffer (msg: OfferPayload, client: io.Socket) {
