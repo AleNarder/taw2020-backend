@@ -28,9 +28,6 @@ const JWTauth = passport.authenticate('jwt', {session: false})
 /******************************
  * AUTH SECTION
  */
-router
-  .route('/auth/moderator')
-  .post(auth.POST.moderator, success)
 
 router
   .route('/auth/login')
@@ -78,7 +75,7 @@ router
  * AUCTIONS SECTION
  */
 router
-  .route('/auctions')
+  .route('/auctions/:active')
   .get(auctions.GET.auctions, success)
   
 router

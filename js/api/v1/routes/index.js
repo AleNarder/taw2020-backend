@@ -61,7 +61,7 @@ router
  * AUCTIONS SECTION
  */
 router
-    .route('/auctions')
+    .route('/auctions/:active')
     .get(auctions_1.default.GET.auctions, success_1.default);
 router
     .route('/auction/user/:userId')

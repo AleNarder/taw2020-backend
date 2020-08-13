@@ -43,6 +43,10 @@ export default {
         const usersAuctions = <userType[]> await UserModel.find().select('auctions location')
         if (usersAuctions) {
           for (let userAuctions of usersAuctions) {
+            if (req.params.active == 'active') {
+              console.log('active')
+              userAuctions.auctions = userAuctions.auctions.filter(auction => auction.isActive)
+            }
             for (let userAuction of userAuctions.auctions) {
               userAuction['usr'] = userAuctions._id
             }
@@ -155,10 +159,13 @@ export default {
     auction: async function (req, res, next) {
       try {
         const { userId, auctionId } = req.params
-        const user = <any> await UserModel.findById(userId)
-        const auction = user.auctions.id(auctionId)
-        auction.isActive = false
-        user.save((err, res)=> {
+        UserModel.findByIdAndUpdate(userId, {
+          '$pull': {
+            'auctions': {
+              '_id': auctionId
+            }
+          }
+        }, (err, res)=> {
           if (!err) {
             req.payload = res
             next()

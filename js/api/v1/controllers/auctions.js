@@ -57,6 +57,10 @@ exports.default = {
                     const usersAuctions = yield user_1.UserModel.find().select('auctions location');
                     if (usersAuctions) {
                         for (let userAuctions of usersAuctions) {
+                            if (req.params.active == 'active') {
+                                console.log('active');
+                                userAuctions.auctions = userAuctions.auctions.filter(auction => auction.isActive);
+                            }
                             for (let userAuction of userAuctions.auctions) {
                                 userAuction['usr'] = userAuctions._id;
                             }
@@ -192,10 +196,13 @@ exports.default = {
             return __awaiter(this, void 0, void 0, function* () {
                 try {
                     const { userId, auctionId } = req.params;
-                    const user = yield user_1.UserModel.findById(userId);
-                    const auction = user.auctions.id(auctionId);
-                    auction.isActive = false;
-                    user.save((err, res) => {
+                    user_1.UserModel.findByIdAndUpdate(userId, {
+                        '$pull': {
+                            'auctions': {
+                                '_id': auctionId
+                            }
+                        }
+                    }, (err, res) => {
                         if (!err) {
                             req.payload = res;
                             next();

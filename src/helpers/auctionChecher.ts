@@ -12,8 +12,10 @@ export default async function auctionChecker () {
         update = true
         auction.isActive = false
         if (auction.currentPrice > auction.threshold) {
-          auction.winner = auction.offers[auction.offers.length - 1].user
-          winner = await UserModel.findById(auction.winner).select('email')
+          if (auction.offers.length > 0) {
+            auction.winner = auction.offers[auction.offers.length - 1].user
+            winner = await UserModel.findById(auction.winner).select('email')
+          }
         }
       }
       if (update) {
