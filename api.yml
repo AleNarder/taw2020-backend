@@ -1,0 +1,617 @@
+openapi: "3.0.2"
+info:
+  title: API Title
+  version: "0.1"
+  contact:
+    name: "Alessio Narder 868071"
+    email: "868071@stud.unive.it"
+  description: Lista degli endpoint forniti dal backend
+
+paths:
+  /auth/login:
+    post:
+      tags:
+      - Autenticazione
+      summary: Effettua il login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Login
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Email dell'utente
+                password:
+                  type: string
+                  description: Password dell'utente
+      responses:
+        '200':
+          description: Login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  payload:
+                    type: object
+                    properties:
+                      token: 
+                        type: string
+                      user:
+                        type: object
+                        $ref: '#/components/schemas/user' 
+
+  /auth/reset:        
+    post:
+      tags:
+      - Autenticazione
+      summary: Reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Login
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email dell'utente
+      responses:
+        '200':
+          description: OK
+  /auth/moderator:
+    post:
+      tags:
+      - Autenticazione
+      summary: Invita un moderatore
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Login
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email dell'utente
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Placeholder description
+  /users:
+    get:
+      tags:
+      - Utenti
+      summary: Ottieni la lista completa degli utenti
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+  /users/{userId}:
+    get:
+      tags:
+      - Utenti
+      summary: Ottieni i dati i un utente
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID dell'utente
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+    delete:
+      tags:
+      - Utenti
+      summary: Rimuove un utente
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID dell'utente
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+    put:
+      tags:
+      - Utenti
+      summary: Modifica le proprietà di un utente 
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID dell'utente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+  /user:
+    post:
+      tags:
+      - Utenti
+      summary: Crea un nuovo utente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+  /auctions/{active}:
+    get:
+      tags:
+      - Inserzioni
+      summary: Ritorna una definita lista di inserzioni 
+      parameters:
+        - in: path
+          name: active
+          schema:
+            type: string
+          required: true
+          description: filtra lo status delle inserzioni (attive/concluse)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+  /auction/user/{userId}:
+    get:
+      tags:
+      - Inserzioni
+      summary: Ritorna le inserzioni di un'utente
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: ID dell'utente
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+    post:
+      tags:
+      - Inserzioni
+      summary: Crea una nuova inserzione
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: ID dell'utente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auction'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+  /auction/{userId}/{auctionId}:
+    get:
+      tags:
+      - Inserzioni
+      summary: Ritorna le proprietà di un'inserzione
+      parameters:
+        - name: userId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: ID dell'utente
+        - name: auctionId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: id dell'inserzione
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+    post:
+      tags:
+      - Inserzioni
+      summary: Modifica un'inserzione
+      parameters:
+        - name: userId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: ID dell'utente
+        - name: auctionId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: id dell'inserzione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auction'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+    delete:
+      tags:
+      - Inserzioni
+      summary: Rimuove un'inserzione
+      parameters:
+        - name: userId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: ID dell'utente
+        - name: auctionId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: id dell'inserzione
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+  /auction/offer/{userId}/{auctionId}:
+    put:
+      tags:
+      - Inserzioni
+      summary: Aggiunge un'offerta ad un'inserzione
+      parameters:
+        - name: userId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: ID dell'utente
+        - name: auctionId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: id dell'inserzione
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/offer'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+  /stats/student/{userId}:
+    get:
+      tags:
+      - Statistiche
+      summary: Statistiche di uno studente
+      parameters:
+        - name: userId 
+          in: path
+          schema:
+            type: string
+          required: true
+          description: ID dell'utente
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+  /stats/moderator:
+    get:
+      tags:
+      - Statistiche
+      summary: Statistiche del moderatore
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                title: Sample
+                type: object
+                properties:
+                  placeholder:
+                    type: string
+                    description: Placeholder description
+components:
+  schemas:
+    user:
+      title: User
+      type: object
+      properties:
+        confirmed:
+          type: boolean
+          description: Utente confermato o meno
+        _id:
+          type: string
+          description: id documento mongo
+        __v:
+          type: number
+          description: versione documento mongo
+        location:
+          type: array
+          items:
+            $ref: '#/components/schemas/location'
+        firstname:
+          type: string
+          description: nome utente
+        lastname:
+          type: string
+          description: cognome utente
+        password:
+          type: string
+          description: password utente
+        email:
+          type: string
+          description: email utente
+        moderator:
+          type: boolean
+          description: moderatore o studente (true se moderatore)
+        username:
+          type: string
+          description: username utente
+        auctions:
+          type: array
+          items:  
+            $ref: '#/components/schemas/auction'
+    location:
+      title: Location
+      type: object
+      properties: 
+        _id:
+          type: string
+          description: id mongo
+        Regione:
+          type: string
+          description: regione dell'utente
+        Provincia:
+          type: string
+          description: provincia dell'utente
+        Comune:
+          type: string
+          description: comune dell'utente
+        CAP:
+          type: string
+          description: cap dell'utente
+        Indirizzo:
+          type: string
+          description: indirizzo dell'utente
+    auction:
+      title: Auction
+      type: object
+      properties:
+        _id:
+          type: string
+          description: id mongo
+        threshold:
+          type: number
+          description: prezzo di riserva
+        currentPrice:
+          type: number
+          description: prezzo corrente
+        winner:
+          type: string
+          description: vincitore dell'inserzione
+        book:
+          type: array
+          description: libro dell'inserzione
+          items:
+            $ref: '#/components/schemas/book'
+        offers:
+          type: array
+          description: offerte dell'inserzione 
+          items:
+            $ref: '#/components/schemas/offer'
+        chats:
+          type: array
+          description: le chat dell'inserzione
+          items:
+            $ref: '#/components/schemas/chat' 
+        expires:
+          type: number
+          description: data di scadenza dell'inserzione
+        isActive:
+          type: boolean
+          description: indica se l'inserzione è attiva o meno
+    book:
+      title: Book
+      type: object
+      properties:
+        _id: 
+          type: string
+          description: id mongo del libro
+        title:
+          type: string
+          description: titolo del libro
+        author:
+          type: string
+          description: nome dell'autore
+        university:
+          type: string
+          description: nome dell'università
+        course:       
+          type: string 
+          description: nome del corso
+    offer:
+      title: Offer
+      type: object
+      properties:
+        _id:
+          type: string
+          description: id mongo dell'offerta
+        user:
+          type: string
+          description: id mongo dell'offerente
+        username:
+          type: string
+          description: username dell'offerente
+        amount:
+          type: number
+          description: importo dell'offerta
+        delta:
+          type: number
+          description: differenza di importo rispetto all'offerta precedente
+        timestamp:
+          type: number
+          description: data dell'offerta in secondi UTC
+    chat:
+      title: Chat
+      type: object
+      properties:
+        messages:
+          type: array
+          description: I messaggi della chat
+          items:
+            $ref: '#/components/schemas/message'
+    message:
+      title: Message
+      type: object
+      properties: 
+        senderId:
+          type: string
+          description: id mongo del mittente
+        senderUs:
+          type: string
+          description: username del mittente
+        message:
+          type: string
+          description: testo del messaggio
+        timestamp:
+          type: number
+          description: data del messaggio in millisecondi UTC

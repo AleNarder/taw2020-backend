@@ -11,7 +11,6 @@ import success from '../middlewares/success'
 import * as passport from 'passport'
 import { enableLoginAuth } from '../middlewares/auth/login'
 import { enableJWTAuth } from '../middlewares/auth/jwt'
-import { stat } from 'fs'
 
 
 const router = express.Router()
@@ -86,12 +85,12 @@ router
 router
   .route('/auction/:userId/:auctionId')
   .get(auctions.GET.auction, success)
-  .put(JWTauth, auctions.PUT.auctionProperty, success)
+  .post(JWTauth, auctions.PUT.auctionProperty, success)
   .delete(JWTauth, auctions.DELETE.auction, success)
 
 router
   .route('/auction/offer/:userId/:auctionId')
-  .put(JWTauth, auctions.PUT.auctionOffer, success)
+  .post(JWTauth, auctions.PUT.auctionOffer, success)
 
 
  /******************************
