@@ -19,7 +19,6 @@ exports.default = {
                     next(new ErrorHandler_1.default(err.code, err.msg));
                 }
                 else {
-                    console.log(user);
                     if (user.res.confirmed) {
                         req.payload = {
                             token: jwt.sign({ id: user.res._id }, process.env.JWT_ENCRYPTION, {
@@ -79,11 +78,9 @@ exports.default = {
                     const link = [baseLink, token].join('&tkn=');
                     EmailSender_1.default.sendEmail('reset-password', req.body.email, link)
                         .then((value) => {
-                        console.log('[RESET]: Mail inviata');
                         next();
                     })
                         .catch((error) => {
-                        console.log('[RESET]: Mail non inviata');
                         next(error);
                     });
                 }

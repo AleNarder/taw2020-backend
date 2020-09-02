@@ -59,62 +59,42 @@ export default {
      */
     user: async function (req, res, next) {
       try {
-        UserModel.findOne({email: req.body.email}, async function(err, usr) {
-          if (!usr) {
-            const user = new UserModel(req.body)
-            user.save(null, (err, res) => {
-              if (!err) {
-                const baseLink = `${process.env.CLIENT_BASE_URL}/login?id=${res._id}`
-                const token = jwt.sign({id: res._id}, process.env.JWT_ENCRYPTION, {
-                  expiresIn: '1h'
-                })
-                const link = [baseLink, token].join('&tkn=')
-                EmailSender.sendEmail("confirm-user", req.body.email, link)
-                .then((value) => {
-                  console.log('[NEW USER]: email inviata')
-                  next()
-                })
-                .catch((error) => {
-                  console.log('[NEW USER]: email non inviata')
-                  next(error) 
-                }) 
-              } else {
-                next(new ErrorHandler(500, 'Utente non salvato'))
-              }
-            })  
-          } else {
-            next(new ErrorHandler(400, 'Utente già esistente'))
-          }
-        })
+        if (req.body.email) {
+          UserModel.findOne({email: req.body.email}, async function(err, usr) {
+            if (!usr) {
+              const user = new UserModel(req.body)
+              user.save(null, (err, res) => { 
+                if (!err) {
+                  const baseLink = `${process.env.CLIENT_BASE_URL}/login?id=${res._id}`
+                  const token = jwt.sign({id: res._id}, process.env.JWT_ENCRYPTION, {
+                    expiresIn: '1h'
+                  })
+                  const link = [baseLink, token].join('&tkn=')
+                  EmailSender.sendEmail("confirm-user", req.body.email, link)
+                  .then((value) => {
+                    console.log('[NEW USER]: email inviata')
+                    next()
+                  })
+                  .catch((error) => {
+                    console.log('[NEW USER]: email non inviata')
+                    next(error) 
+                  }) 
+                } else {
+                  console.log(err)
+                  next(new ErrorHandler(500, 'Utente non salvato'))
+                }
+              })  
+            } else {
+              next(new ErrorHandler(400, 'Utente già esistente'))
+            }
+          })
+        }
       } catch (e) {
         next(e)
       }
     }
   },
 
-  PUT: {
-    /**
-     * Modify user info or role
-     * Used by admin (when promoting user) or by user for itself
-     * @param req request
-     * @param res response
-     * @param next next function to execute in the pipeline
-     */
-    userProperty:  function (req, res, next) {
-      try {
-        UserModel.findByIdAndUpdate(req.params.userId, req.body, (err, res) => {
-          if (!err) {
-            req.payload = res
-          } else {
-            throw new ErrorHandler(500, 'Utente non aggiornato')
-          }
-        })
-        next()
-      } catch (e) {
-        next(e)
-      }
-    }
-  },
   DELETE: {
     /**
      * Delete user

@@ -18,7 +18,6 @@ export default {
         req.body.auction.chats = [{
           'scope': 'public'
         }]
-        console.log(req.body.auction)
         const auction = new AuctionModel(req.body.auction)
         UserModel.findByIdAndUpdate(user, {$push: {auctions: auction}}, (err, res) => {
           if (!err){
@@ -44,7 +43,6 @@ export default {
         if (usersAuctions) {
           for (let userAuctions of usersAuctions) {
             if (req.params.active == 'active') {
-              console.log('active')
               userAuctions.auctions = userAuctions.auctions.filter(auction => auction.isActive)
             }
             for (let userAuction of userAuctions.auctions) {
@@ -103,7 +101,6 @@ export default {
         const payload = req.body
         const user = <userType> await UserModel.findById(userId)
         const auctionIdx = user.auctions.findIndex(auction => auction._id == auctionId)
-        console.log(user.auctions[auctionIdx])
         user.auctions[auctionIdx] = {...user.auctions[auctionIdx], ...payload}
         user.save((err, res)=> {
           if (!err) {

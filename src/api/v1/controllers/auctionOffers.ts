@@ -2,6 +2,11 @@ import { OfferPayload } from "../models/offer";
 import { UserModel } from "../models/user";
 
 export default {
+  /**
+   * Aggiunge un'offerta ad un'inserzione
+   * @param payload 
+   * @param timestamp 
+   */
   async auctionOffer (payload: OfferPayload, timestamp) {
     try {
       const user = <any> await UserModel.findById(payload.receiverId)

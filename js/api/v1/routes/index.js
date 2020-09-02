@@ -3,14 +3,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 // Controllers
 const users_1 = require("../controllers/users");
-const books_1 = require("../controllers/books");
 const auctions_1 = require("../controllers/auctions");
 const auth_1 = require("../controllers/auth");
 const stats_1 = require("../controllers/stats");
 const success_1 = require("../middlewares/success");
+// Validators
+const auth_2 = require("../validators/auth");
+const users_2 = require("../validators/users");
+const auctions_2 = require("../validators/auctions");
 const passport = require("passport");
 const login_1 = require("../middlewares/auth/login");
 const jwt_1 = require("../middlewares/auth/jwt");
+const index_1 = require("../middlewares/validator/index");
 const router = express.Router();
 /******************************
  * GUARD SECTION
@@ -22,17 +26,14 @@ const JWTauth = passport.authenticate('jwt', { session: false });
  * AUTH SECTION
  */
 router
-    .route('/auth/moderator')
-    .post(auth_1.default.POST.moderator, success_1.default);
-router
     .route('/auth/login')
-    .post(auth_1.default.POST.login, success_1.default);
+    .post(index_1.validate.bind(auth_2.default.POST.login), auth_1.default.POST.login, success_1.default);
 router
     .route('/auth/reset')
-    .post(auth_1.default.POST.reset, success_1.default);
+    .post(index_1.validate.bind(auth_2.default.POST.reset), auth_1.default.POST.reset, success_1.default);
 router
     .route('/auth/moderator')
-    .post(JWTauth, auth_1.default.POST.moderator, success_1.default);
+    .post(JWTauth, index_1.validate.bind(auth_2.default.POST.reset), index_1.validate.bind(auth_2.default.POST.moderator), auth_1.default.POST.moderator, success_1.default);
 /******************************
  * USER SECTION
  */
@@ -42,21 +43,10 @@ router
 router
     .route('/users/:userId')
     .get(JWTauth, users_1.default.GET.user, success_1.default)
-    .delete(JWTauth, users_1.default.DELETE.user, success_1.default)
-    .put(JWTauth, users_1.default.PUT.userProperty, success_1.default);
+    .delete(JWTauth, users_1.default.DELETE.user, success_1.default);
 router
     .route('/user')
-    .post(users_1.default.POST.user, success_1.default);
-/******************************
- * BOOKS SECTION
- */
-router
-    .route('/books')
-    .get(books_1.default.GET.books);
-router
-    .route('/books/:bookId')
-    .put(books_1.default.PUT.book)
-    .get(books_1.default.GET.book);
+    .post(index_1.validate.bind(users_2.default.POST.newUser), users_1.default.POST.user, success_1.default);
 /******************************
  * AUCTIONS SECTION
  */
@@ -66,15 +56,12 @@ router
 router
     .route('/auction/user/:userId')
     .get(JWTauth, auctions_1.default.GET.userAuctions, success_1.default)
-    .post(JWTauth, auctions_1.default.POST.auction, success_1.default);
+    .post(JWTauth, index_1.validate.bind(auctions_2.default.POST.newAuction), auctions_1.default.POST.auction, success_1.default);
 router
     .route('/auction/:userId/:auctionId')
     .get(auctions_1.default.GET.auction, success_1.default)
     .put(JWTauth, auctions_1.default.PUT.auctionProperty, success_1.default)
     .delete(JWTauth, auctions_1.default.DELETE.auction, success_1.default);
-router
-    .route('/auction/offer/:userId/:auctionId')
-    .put(JWTauth, auctions_1.default.PUT.auctionOffer, success_1.default);
 /******************************
 * STATS SECTION
 */

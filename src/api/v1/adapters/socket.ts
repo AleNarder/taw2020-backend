@@ -51,7 +51,7 @@ class SocketUtils implements Interruptable {
 
   private disconnect (client: io.Socket) {
     this.clients.delete(client.id)
-    console.log(this.tag + ' connection closed')
+    console.log(this.tag + 'connection closed')
   }
 
   private addClient (clientMongoID: string, client: io.Socket) {

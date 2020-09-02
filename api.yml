@@ -1,12 +1,17 @@
 openapi: "3.0.2"
 info:
-  title: API Title
+  title: Progetto TAW 2020
   version: "0.1"
   contact:
     name: "Alessio Narder 868071"
     email: "868071@stud.unive.it"
   description: Lista degli endpoint forniti dal backend
 
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Server per testing locale
+  - url: https://taw-backend.herokuapp.com/api/v1
+    description: Server di produzione
 paths:
   /auth/login:
     post:
@@ -27,6 +32,8 @@ paths:
                   type: string
                   description: Password dell'utente
       responses:
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
           description: Login
           content:
@@ -61,10 +68,14 @@ paths:
                   type: string
                   description: Email dell'utente
       responses:
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
-          description: OK
+          $ref: '#/components/responses/RequestSuccess'
   /auth/moderator:
     post:
+      security:
+        - bearerAuth: []
       tags:
       - Autenticazione
       summary: Invita un moderatore
@@ -79,6 +90,22 @@ paths:
                   type: string
                   description: Email dell'utente
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
+        '200':
+          $ref: '#/components/responses/RequestError'
+  /users:
+    get:
+      tags:
+      - Utenti
+      summary: Ottieni la lista completa degli utenti
+      security:
+        - bearerAuth: []
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '200':
           description: OK
           content:
@@ -89,29 +116,18 @@ paths:
                 properties:
                   status:
                     type: string
-                    description: Placeholder description
-  /users:
-    get:
-      tags:
-      - Utenti
-      summary: Ottieni la lista completa degli utenti
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                title: Sample
-                type: object
-                properties:
-                  placeholder:
-                    type: string
-                    description: Placeholder description
+                    description: Success or fail
+                  payload:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/user'
   /users/{userId}:
     get:
       tags:
       - Utenti
-      summary: Ottieni i dati i un utente
+      security:
+        - bearerAuth: []
+      summary: Ottieni i dati di un utente
       parameters:
         - in: path
           name: userId
@@ -120,6 +136,10 @@ paths:
           required: true
           description: ID dell'utente
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
           description: OK
           content:
@@ -128,12 +148,18 @@ paths:
                 title: Sample
                 type: object
                 properties:
-                  placeholder:
+                  status:
                     type: string
-                    description: Placeholder description
+                    description: Esito della chiamata
+                  payload:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/user'
     delete:
       tags:
       - Utenti
+      security:
+        - bearerAuth: []
       summary: Rimuove un utente
       parameters:
         - in: path
@@ -143,20 +169,17 @@ paths:
           required: true
           description: ID dell'utente
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                title: Sample
-                type: object
-                properties:
-                  placeholder:
-                    type: string
-                    description: Placeholder description
+          $ref: '#/components/responses/RequestSuccess'
     put:
       tags:
       - Utenti
+      security:
+        - bearerAuth: []
       summary: Modifica le proprietà di un utente 
       parameters:
         - in: path
@@ -171,21 +194,17 @@ paths:
             schema:
               $ref: '#/components/schemas/user'
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                title: Sample
-                type: object
-                properties:
-                  placeholder:
-                    type: string
-                    description: Placeholder description
-  /user:
+          $ref: '#/components/responses/RequestSuccess'
     post:
       tags:
       - Utenti
+      security:
+        - bearerAuth: []
       summary: Crea un nuovo utente
       requestBody:
         content:
@@ -193,17 +212,12 @@ paths:
             schema:
               $ref: '#/components/schemas/user'
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                title: Sample
-                type: object
-                properties:
-                  placeholder:
-                    type: string
-                    description: Placeholder description
+          $ref: '#/components/responses/RequestSuccess'
   /auctions/{active}:
     get:
       tags:
@@ -217,6 +231,8 @@ paths:
           required: true
           description: filtra lo status delle inserzioni (attive/concluse)
       responses:
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
           description: OK
           content:
@@ -225,13 +241,19 @@ paths:
                 title: Sample
                 type: object
                 properties:
-                  placeholder:
+                  status:
                     type: string
-                    description: Placeholder description
+                    description: Esito della chiamata
+                  payload:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/auction'
   /auction/user/{userId}:
     get:
       tags:
       - Inserzioni
+      security:
+        - bearerAuth: []
       summary: Ritorna le inserzioni di un'utente
       parameters:
         - in: path
@@ -241,6 +263,10 @@ paths:
           required: true
           description: ID dell'utente
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
           description: OK
           content:
@@ -249,13 +275,19 @@ paths:
                 title: Sample
                 type: object
                 properties:
-                  placeholder:
+                  status:
                     type: string
-                    description: Placeholder description
+                    description: Esito della chiamata
+                  payload:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/auction'
     post:
       tags:
       - Inserzioni
       summary: Crea una nuova inserzione
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: userId
@@ -269,22 +301,19 @@ paths:
             schema:
               $ref: '#/components/schemas/auction'
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                title: Sample
-                type: object
-                properties:
-                  placeholder:
-                    type: string
-                    description: Placeholder description
+          $ref: '#/components/responses/RequestSuccess'
   /auction/{userId}/{auctionId}:
     get:
       tags:
       - Inserzioni
       summary: Ritorna le proprietà di un'inserzione
+      security:
+        - bearerAuth: []
       parameters:
         - name: userId 
           in: path
@@ -299,6 +328,10 @@ paths:
           required: true
           description: id dell'inserzione
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
           description: OK
           content:
@@ -307,13 +340,19 @@ paths:
                 title: Sample
                 type: object
                 properties:
-                  placeholder:
+                  status:
                     type: string
-                    description: Placeholder description
-    post:
+                    description: Esito della chiamata
+                  payload:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/auction'
+    put:
       tags:
       - Inserzioni
       summary: Modifica un'inserzione
+      security:
+        - bearerAuth: []
       parameters:
         - name: userId 
           in: path
@@ -333,20 +372,17 @@ paths:
             schema:
               $ref: '#/components/schemas/auction'
       responses:
+        '400':
+          $ref: '#/components/responses/RequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                title: Sample
-                type: object
-                properties:
-                  placeholder:
-                    type: string
-                    description: Placeholder description
+          $ref: '#/components/responses/RequestSuccess'
     delete:
       tags:
       - Inserzioni
+      security:
+        - bearerAuth: []
       summary: Rimuove un'inserzione
       parameters:
         - name: userId 
@@ -362,56 +398,19 @@ paths:
           required: true
           description: id dell'inserzione
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                title: Sample
-                type: object
-                properties:
-                  placeholder:
-                    type: string
-                    description: Placeholder description
-  /auction/offer/{userId}/{auctionId}:
-    put:
-      tags:
-      - Inserzioni
-      summary: Aggiunge un'offerta ad un'inserzione
-      parameters:
-        - name: userId 
-          in: path
-          schema:
-            type: string
-          required: true
-          description: ID dell'utente
-        - name: auctionId 
-          in: path
-          schema:
-            type: string
-          required: true
-          description: id dell'inserzione
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/offer'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                title: Sample
-                type: object
-                properties:
-                  placeholder:
-                    type: string
-                    description: Placeholder description
+          $ref: '#/components/responses/RequestSuccess'
+
   /stats/student/{userId}:
     get:
       tags:
       - Statistiche
+      security:
+        - bearerAuth: []
       summary: Statistiche di uno studente
       parameters:
         - name: userId 
@@ -421,6 +420,10 @@ paths:
           required: true
           description: ID dell'utente
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
           description: OK
           content:
@@ -436,8 +439,14 @@ paths:
     get:
       tags:
       - Statistiche
+      security:
+        - bearerAuth: []
       summary: Statistiche del moderatore
       responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/RequestError'
         '200':
           description: OK
           content:
@@ -450,6 +459,11 @@ paths:
                     type: string
                     description: Placeholder description
 components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  
   schemas:
     user:
       title: User
@@ -591,7 +605,7 @@ components:
           type: number
           description: data dell'offerta in secondi UTC
     chat:
-      title: Chat
+      title: Chat 
       type: object
       properties:
         messages:
@@ -615,3 +629,52 @@ components:
         timestamp:
           type: number
           description: data del messaggio in millisecondi UTC
+    moderatorStats:
+      title: Statistiche Moderatore
+      type: object
+      properties: 
+        successful:
+          type: number
+          description: Numero di aste concluse con successo
+        unSuccesful:
+          type: number
+          description: Numero di aste chiuse con prezzo di riserva non raggiunto
+        active:
+          type: number
+          description: Numero di aste attive
+    studentStats:
+      title: Statistiche Studente
+      type: object
+      properties:
+        
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    RequestSuccess:
+      description: Richiesta lecita
+      content:
+        application/json:
+          schema:
+            title: Success
+            type: object
+            properties:
+              status:
+                type: string
+                description: Esito della chiamata
+              payload:
+                type: object
+                description: Il contenuto modificato o aggiunto  
+    RequestError:
+      description: Richiesta non lecita
+      content:
+        application/json:
+          schema:
+            title: Error
+            type: object
+            properties:
+              status:
+                type: string
+                description: Esito della chiamata
+              error: 
+                type: string
+                description: Descrizione dell'errore

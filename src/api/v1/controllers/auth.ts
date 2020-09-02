@@ -13,24 +13,23 @@ export default {
      * @param next 
      */
     login: function (req, res, next) {
-        passport.authenticate('local', {session: false}, (err, user) => {
-          if (err) {
-            next(new ErrorHandler(err.code, err.msg))
-          } else {
-            console.log(user)
-            if (user.res.confirmed) {
-              req.payload = {
-                token: jwt.sign({id: user.res._id}, process.env.JWT_ENCRYPTION, {
-                  expiresIn: '1h'
-                }),
-                user: user.res
-              }
-              next()
-              } else {
-                next(new ErrorHandler(400, 'Utente non confermato: controlla la tua casella email'))
-              }
+      passport.authenticate('local', {session: false}, (err, user) => {
+        if (err) {
+          next(new ErrorHandler(err.code, err.msg))
+        } else {
+          if (user.res.confirmed) {
+            req.payload = {
+              token: jwt.sign({id: user.res._id}, process.env.JWT_ENCRYPTION, {
+                expiresIn: '1h'
+              }),
+              user: user.res
             }
-        })(req, res, next)
+            next()
+            } else {
+              next(new ErrorHandler(400, 'Utente non confermato: controlla la tua casella email'))
+            }
+          }
+      })(req, res, next)
     },
 
     /**
@@ -77,15 +76,13 @@ export default {
           const link = [baseLink, token].join('&tkn=')
           emailSender.sendEmail('reset-password', req.body.email, link)
           .then((value) => {
-            console.log('[RESET]: Mail inviata')
             next()
           })
           .catch((error) => {
-            console.log('[RESET]: Mail non inviata')
             next(error)
           })
         }
-      })
+      }) 
     }
   }
 }
