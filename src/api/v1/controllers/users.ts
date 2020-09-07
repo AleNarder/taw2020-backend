@@ -107,11 +107,11 @@ export default {
         UserModel.findByIdAndUpdate(req.params.userId, req.body, (err, res) => {
           if (!err) {
             req.payload = res
+            next()
           } else {
-            throw new ErrorHandler(500, 'Utente non aggiornato')
+            next(new ErrorHandler(500, 'Utente non aggiornato'))
           }
         })
-        next()
       } catch (e) {
         next(e)
       }

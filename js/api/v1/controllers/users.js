@@ -129,12 +129,12 @@ exports.default = {
                 user_1.UserModel.findByIdAndUpdate(req.params.userId, req.body, (err, res) => {
                     if (!err) {
                         req.payload = res;
+                        next();
                     }
                     else {
-                        throw new ErrorHandler_1.default(500, 'Utente non aggiornato');
+                        next(new ErrorHandler_1.default(500, 'Utente non aggiornato'));
                     }
                 });
-                next();
             }
             catch (e) {
                 next(e);
