@@ -54,7 +54,7 @@ router
   .route('/users/:userId')
   .get(JWTauth, user.GET.user, success)
   .delete(JWTauth, user.DELETE.user, success)
-  .put(JWTauth, user.POST.user, success)
+  .put(JWTauth, user.PUT.userProperty, success)
 
 router
   .route('/user')

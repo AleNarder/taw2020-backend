@@ -44,7 +44,7 @@ router
     .route('/users/:userId')
     .get(JWTauth, users_1.default.GET.user, success_1.default)
     .delete(JWTauth, users_1.default.DELETE.user, success_1.default)
-    .put(JWTauth, users_1.default.POST.user, success_1.default);
+    .put(JWTauth, users_1.default.PUT.userProperty, success_1.default);
 router
     .route('/user')
     .post(index_1.validate.bind(users_2.default.POST.newUser), users_1.default.POST.user, success_1.default);
