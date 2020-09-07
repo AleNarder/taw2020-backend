@@ -7,4 +7,12 @@ router
   .route('/')
   .get(status.GET.status)
 
+router
+  .route('/docs/backend')
+  .get(docs.backend)
+
+router
+  .route('/docs/frontend')
+  .get(docs.frontend)
+
 export default router
