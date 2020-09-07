@@ -94,7 +94,29 @@ export default {
       }
     }
   },
-
+  PUT: {
+    /**
+     * Modify user info or role
+     * Used by admin (when promoting user) or by user for itself
+     * @param req request
+     * @param res response
+     * @param next next function to execute in the pipeline
+     */
+    userProperty:  function (req, res, next) {
+      try {
+        UserModel.findByIdAndUpdate(req.params.userId, req.body, (err, res) => {
+          if (!err) {
+            req.payload = res
+          } else {
+            throw new ErrorHandler(500, 'Utente non aggiornato')
+          }
+        })
+        next()
+      } catch (e) {
+        next(e)
+      }
+    }
+  },
   DELETE: {
     /**
      * Delete user
