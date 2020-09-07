@@ -40,17 +40,6 @@ const rules = {
 }
 
 /**
- * Helper di test
- * Verifica che tutte le proprietà dell'oggetto 
- * esistano nello schema
- * @param schema - schema di validazione
- * @param obj - oggetto da validare
- */
-function matchTest (schema, obj): boolean {
-  return obj && !Object.keys(schema).find(key => !obj[key])
-}
-
-/**
  * Helper di validate
  * Ricorsivamente verifica che tutte le proprietà dell'oggetto
  * rispettino lo schema
@@ -58,20 +47,17 @@ function matchTest (schema, obj): boolean {
  * @param obj - oggetto da validare
  */
 function test (schema, obj): boolean {
-  if (matchTest(schema, obj)) {
-    return Object.keys(schema).map((subschema) => {
-      if (Array.isArray(schema[subschema])) {
-        return schema[subschema]
-          .map(prop => rules[prop](obj[subschema]))
-          .reduce((a,c) => a && c )
-      } else {
-        return test(schema[subschema], obj[subschema])
-      }
-    }).reduce((a,c) => a && c)
-  } else {
-    return false
-  }
+  return Object.keys(schema).map((subschema) => {
+    if (Array.isArray(schema[subschema])) {
+      return schema[subschema]
+        .map(prop => rules[prop](obj[subschema]))
+        .reduce((a,c) => a && c )
+    } else {
+      return test(schema[subschema], obj[subschema])
+    }
+  }).reduce((a,c) => a && c)
 }
+
 
 /**
  * Funzione di validazione
