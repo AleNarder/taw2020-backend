@@ -50,7 +50,9 @@ export default {
               })
               if (auction.winner == userId) {
                 auctionsWithUserWinner.push({
-                  _id: auction._id
+                  _id: auction._id,
+                  book: auction.book,
+                  expires: auction.expires
                 })
               }
             }
